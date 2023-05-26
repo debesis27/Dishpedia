@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.dishpedia.R
-import java.lang.Math.abs
 
 @Composable
 fun HomeScreen(){
@@ -81,38 +80,23 @@ fun Carousel(
     contentHeight: Dp,
     content: @Composable (modifier: Modifier, index: Int) -> Unit
 ) {
-    val listState = rememberLazyListState(Int.MAX_VALUE / 2)
 
     BoxWithConstraints(modifier = parentModifier) {
-        val halfColumnHeight = constraints.maxHeight / 2
-
         LazyRow(
-            state = listState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(top = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(-contentWidth / 2),
+            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             items(
-                count = Int.MAX_VALUE,
+                count = count,
                 itemContent = { globalIndex ->
-                    val scale = remember(globalIndex) {
-                        val currentItem =
-                            listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == globalIndex }
-                                ?: return@remember 0.85f
-
-                        (1f - minOf(
-                            1f,
-                            abs(currentItem.offset + (currentItem.size / 2) - halfColumnHeight).toFloat() / halfColumnHeight ) * 0.25f)
-                    }
-
                     content(
                         index = globalIndex % count,
                         modifier = Modifier
                             .width(contentWidth)
                             .height(contentHeight)
-                            .scale(scale)
-                            .zIndex(scale * 10)
+                            .padding(start = 4.dp, end = 4.dp)
                     )
                 }
             )
@@ -124,9 +108,9 @@ fun Carousel(
 @Composable
 fun HomeScreenPreview(){
     Carousel(
-        count = 5,
+        count = 10,
         parentModifier = Modifier.fillMaxWidth().height(200.dp),
-        contentWidth = 150.dp,
+        contentWidth = 250.dp,
         contentHeight = 200.dp
     ) { modifier, index ->
         Box(
