@@ -3,11 +3,10 @@ package com.example.dishpedia.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import org.w3c.dom.ProcessingInstruction
 
 data class Recipes(
     @SerializedName(value = "recipes", alternate = ["results"])
-    val recipes: ArrayList<Recipe>
+    val recipes: List<Recipe>
 )
 
 @Entity

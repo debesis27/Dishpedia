@@ -11,6 +11,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.dishpedia.ui.theme.screens.homeScreen.HomeScreen
+import com.example.dishpedia.viewmodel.RecipesViewModel
 
 enum class DishpediaScreen(){
     Home,
@@ -19,7 +21,10 @@ enum class DishpediaScreen(){
 }
 
 @Composable
-fun DishpediaApp(modifier: Modifier = Modifier){
+fun DishpediaApp(
+    recipesViewModel: RecipesViewModel,
+    modifier: Modifier = Modifier
+){
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = DishpediaScreen.valueOf(backStackEntry?.destination?.route ?: DishpediaScreen.Home.name)
@@ -34,7 +39,7 @@ fun DishpediaApp(modifier: Modifier = Modifier){
         }
     ) { innerPadding ->
         // TODO: add NavHost
-
+        HomeScreen(recipesViewModel.recipeUiState)
     }
 }
 
