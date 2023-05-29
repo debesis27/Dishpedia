@@ -3,21 +3,21 @@ package com.example.dishpedia
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.dishpedia.ui.theme.screens.homeScreen.HomeScreen
+import com.example.dishpedia.ui.screens.SearchScreen
 import com.example.dishpedia.viewmodel.RecipesViewModel
 
 enum class DishpediaScreen(){
-    Home,
+    Dishpedia,                      //HomePage
     MyRecipes,
-    Account
+    Account,
+    Search
 }
 
 @Composable
@@ -27,7 +27,7 @@ fun DishpediaApp(
 ){
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = DishpediaScreen.valueOf(backStackEntry?.destination?.route ?: DishpediaScreen.Home.name)
+    val currentScreen = DishpediaScreen.valueOf(backStackEntry?.destination?.route ?: DishpediaScreen.Dishpedia.name)
 
     Scaffold(
         topBar = {
@@ -39,7 +39,7 @@ fun DishpediaApp(
         }
     ) { innerPadding ->
         // TODO: add NavHost
-        HomeScreen(recipesViewModel.recipeUiState)
+        SearchScreen(recipesViewModel)
     }
 }
 
@@ -51,7 +51,7 @@ fun DishpediaAppBar(
     modifier: Modifier = Modifier
 ){
     TopAppBar(
-        title = { Text(stringResource(id = R.string.app_name)) },
+        title = { Text(currentScreen.name) },
         modifier = modifier,
         navigationIcon = {
             if (canNavigateBack) {
@@ -59,6 +59,16 @@ fun DishpediaAppBar(
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back_button)
+                    )
+                }
+            }
+        },
+        actions = {
+            if (currentScreen.name == "Dishpedia"){
+                IconButton(onClick = { /*TODO: Add SearchPage*/ }) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = stringResource(id = R.string.search_button)
                     )
                 }
             }
