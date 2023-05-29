@@ -1,10 +1,7 @@
-package com.example.dishpedia.ui.theme.screens
+package com.example.dishpedia.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +19,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -105,7 +101,9 @@ private fun RecipeCard(
     modifier: Modifier = Modifier
 ){
     Card(
-        modifier = modifier.padding(8.dp),
+        modifier = modifier
+            .padding(8.dp)
+            .fillMaxWidth(),
         elevation = 4.dp
     ) {
         Column {
@@ -115,9 +113,10 @@ private fun RecipeCard(
                     .crossfade(true)
                     .build(),
                 contentDescription = recipe.title,
+                modifier = Modifier.fillMaxWidth(),
                 error = painterResource(id = R.drawable.ic_connection_error),
                 placeholder = painterResource(id = R.drawable.loading_img),
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.FillWidth
             )
             Text(
                 text = recipe.title,

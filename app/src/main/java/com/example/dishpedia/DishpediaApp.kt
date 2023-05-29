@@ -10,8 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.dishpedia.ui.theme.screens.HomeScreen
-import com.example.dishpedia.ui.theme.screens.SearchScreen
+import com.example.dishpedia.ui.screens.SearchScreen
 import com.example.dishpedia.viewmodel.RecipesViewModel
 
 enum class DishpediaScreen(){

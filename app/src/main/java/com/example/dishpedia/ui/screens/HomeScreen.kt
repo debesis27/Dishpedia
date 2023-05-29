@@ -1,4 +1,4 @@
-package com.example.dishpedia.ui.theme.screens
+package com.example.dishpedia.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
