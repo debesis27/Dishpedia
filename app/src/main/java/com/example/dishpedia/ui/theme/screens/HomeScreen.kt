@@ -1,14 +1,13 @@
-package com.example.dishpedia.ui.theme.screens.homeScreen
+package com.example.dishpedia.ui.theme.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
@@ -23,20 +22,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.dishpedia.R
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
 import com.example.dishpedia.viewmodel.RecipeUiState
+import com.example.dishpedia.viewmodel.RecipesViewModel
 
 @Composable
-fun HomeScreen(recipesUiState: RecipeUiState){
+fun HomeScreen(recipesViewModel: RecipesViewModel){
     Scaffold(
         content = {
             Column(modifier = Modifier) {
@@ -67,17 +66,59 @@ fun HomeScreen(recipesUiState: RecipeUiState){
                     )
                 }
                 //TODO: Make list and stuffs, then check whether carousel works
-//                Carousel(
-//                    count = list.size,
-//                    contentWidth = maxWidth,
-//                    contentHeight = 200.dp,
-//                    content = { modifier, index ->
-//                        MyComposableContent(
-//                            item = list[index],
-//                            modifier = modifier
-//                        )
-//                    }
-//                )
+                Carousel(
+                    count = 10,
+                    parentModifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentWidth = 250.dp,
+                    contentHeight = 200.dp
+                ) { modifier, index ->
+                    val image = when(index){
+                        0 -> R.drawable.maincourse
+                        1 -> R.drawable.bread
+                        2 -> R.drawable.appetizer
+                        3 -> R.drawable.beverage
+                        4 -> R.drawable.breakfast
+                        5 -> R.drawable.desserts
+                        6 -> R.drawable.salad
+                        7 -> R.drawable.sidedish
+                        8 -> R.drawable.snacks
+                        else -> R.drawable.soup
+                    }
+                    val text = when(index){
+                        0 -> R.string.maincourse
+                        1 -> R.string.bread
+                        2 -> R.string.appetizer
+                        3 -> R.string.beverage
+                        4 -> R.string.breakfast
+                        5 -> R.string.desserts
+                        6 -> R.string.salad
+                        7 -> R.string.sidedish
+                        8 -> R.string.snacks
+                        else -> R.string.soup
+                    }
+                    Box(
+                        modifier = modifier
+                            .background(Color.White),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        Column {
+                            Image(
+                                painter = painterResource(id = image),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .height(150.dp)
+                                    .width(150.dp)
+                            )
+                            Text(
+                                text = stringResource(id = text),
+                                modifier = Modifier.width(150.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+    }
                 Row(
                     modifier = Modifier
                         .padding(top = 14.dp,start = 3.dp, end = 3.dp),
@@ -106,7 +147,7 @@ fun HomeScreen(recipesUiState: RecipeUiState){
                 }
 
                 //TODO: Add the staggered list here
-                when(recipesUiState){
+                when(val recipesUiState = recipesViewModel.randomRecipeUiState){
                     is RecipeUiState.Success -> RecipeStaggeredGrid(recipes = recipesUiState.recipes)
                 }
             }
@@ -140,7 +181,6 @@ fun Carousel(
                         modifier = Modifier
                             .width(contentWidth)
                             .height(contentHeight)
-                            .padding(start = 4.dp, end = 4.dp)
                     )
                 }
             )
@@ -190,7 +230,7 @@ fun RecipeStaggeredGrid(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun CarouselPreview(){
     Carousel(
@@ -201,42 +241,49 @@ fun CarouselPreview(){
         contentWidth = 250.dp,
         contentHeight = 200.dp
     ) { modifier, index ->
+        val image = when(index){
+            0 -> R.drawable.maincourse
+            1 -> R.drawable.bread
+            2 -> R.drawable.appetizer
+            3 -> R.drawable.beverage
+            4 -> R.drawable.breakfast
+            5 -> R.drawable.desserts
+            6 -> R.drawable.salad
+            7 -> R.drawable.sidedish
+            8 -> R.drawable.snacks
+            else -> R.drawable.soup
+        }
+        val text = when(index){
+            0 -> R.string.maincourse
+            1 -> R.string.bread
+            2 -> R.string.appetizer
+            3 -> R.string.beverage
+            4 -> R.string.breakfast
+            5 -> R.string.desserts
+            6 -> R.string.salad
+            7 -> R.string.sidedish
+            8 -> R.string.snacks
+            else -> R.string.soup
+        }
         Box(
             modifier = modifier
-                .background(Color.LightGray)
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
+                .background(Color.White),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Text(
-                text = "Item ${index + 1}",
-                style = TextStyle(color = Color.White, fontSize = 20.sp)
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Preview
-@Composable
-fun LazyVerticalStaggeredGridPreview(){
-    val itemsList = (0..20).toList()
-    val itemsIndexedList = listOf("A", "B", "C")
-
-    val itemModifier = Modifier
-        .border(1.dp, Color.Blue)
-        .wrapContentSize()
-
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2)
-    ) {
-        items(itemsList) {
-            Text("Item is $it", itemModifier.height(80.dp))
-        }
-        item {
-            Text("Single item", itemModifier.height(100.dp))
-        }
-        itemsIndexed(itemsIndexedList) { index, item ->
-            Text("Item at index $index is $item", itemModifier.height(160.dp))
+            Column {
+                Image(
+                    painter = painterResource(id = image),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(150.dp)
+                        .width(150.dp)
+                )
+                Text(
+                    text = stringResource(id = text),
+                    modifier = Modifier.width(150.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

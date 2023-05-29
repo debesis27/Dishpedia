@@ -1,6 +1,17 @@
 <resources>
     <string name="app_name">Dishpedia</string>
     <string name="back_button">Back</string>
+    <string name="search_button">Search</string>
     <string name="categories">Categories</string>
     <string name="featured">Featured</string>
+    <string name="maincourse">Main Course</string>
+    <string name="appetizer">Appetizers</string>
+    <string name="bread">Breads</string>
+    <string name="beverage">Beverages</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="desserts">Desserts</string>
+    <string name="salad">Salad</string>
+    <string name="sidedish">Side Dish</string>
+    <string name="snacks">Snacks</string>
+    <string name="soup">Soup</string>
 </resources>

@@ -3,7 +3,6 @@ package com.example.dishpedia.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -11,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.dishpedia.DishpediaApplication
-import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
 import com.example.dishpedia.repository.RecipeRepository
 import com.example.dishpedia.utils.Constants.Companion.API_KEY
@@ -24,7 +22,6 @@ import com.example.dishpedia.utils.Constants.Companion.QUERY_NUMBER
 import com.example.dishpedia.utils.Constants.Companion.QUERY_TYPE
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import retrofit2.Response
 import java.io.IOException
 
 sealed interface RecipeUiState{
@@ -37,19 +34,20 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
     /**
      * The mutable State that stores the status of the most recent request
      */
-    var recipeUiState: RecipeUiState by mutableStateOf(RecipeUiState.Loading)
+    var randomRecipeUiState: RecipeUiState by mutableStateOf(RecipeUiState.Loading)
+    var searchedRecipeUiState: RecipeUiState by mutableStateOf(RecipeUiState.Loading)
 
     /**
      * Call getRandomRecipes() on init so we can display status immediately.
      */
     init {
-        getRandomRecipes(API_KEY, 1)
+        getRandomRecipes(API_KEY, 20)
     }
 
     private fun getRandomRecipes(apiKey: String, number: Int){
         viewModelScope.launch {
-            recipeUiState = try {
-                RecipeUiState.Success(repository.getRandomRecipes(API_KEY, 30))
+            randomRecipeUiState = try {
+                RecipeUiState.Success(repository.getRandomRecipes(apiKey, number))
             }catch (e: IOException){
                 RecipeUiState.Error
             }catch (e: HttpException){
@@ -58,13 +56,19 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
         }
     }
 
-//    fun getSearchedRecipes(query: HashMap<String, String>){
-//        viewModelScope.launch {
-//            val response = repository.getSearchedRecipes(query)
-//            recipesResponse.value = response
-//        }
-//    }
-//
+    fun getSearchedRecipes(searchTerm: String){
+        val query = applySearchQueries(searchTerm)
+        viewModelScope.launch {
+           searchedRecipeUiState = try {
+               RecipeUiState.Success(repository.getSearchedRecipes(query))
+           }catch (e: IOException){
+               RecipeUiState.Error
+           }catch (e: HttpException){
+               RecipeUiState.Error
+           }
+        }
+    }
+
 //    fun getRecipeById(id: Int, apiKey: String){
 //        viewModelScope.launch {
 //            val response = repository.getRecipeById(id, apiKey)
@@ -75,7 +79,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
     fun applyCategoryQueries(courseType: String): HashMap<String, String> {
         val queries: HashMap<String, String> = HashMap()
 
-        queries[QUERY_NUMBER] = "50"
+        queries[QUERY_NUMBER] = "20"
         queries[QUERY_API_KEY] = API_KEY
         queries[QUERY_TYPE] = courseType
         queries[QUERY_INSTRUCTIONS] = "true"
@@ -89,7 +93,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
         val queries: HashMap<String, String> = HashMap()
 
         queries[QUERY] = searchTerm
-        queries[QUERY_NUMBER] = "50"
+        queries[QUERY_NUMBER] = "20"
         queries[QUERY_API_KEY] = API_KEY
         queries[QUERY_INSTRUCTIONS] = "true"
         queries[QUERY_ADD_RECIPE_INFORMATION] = "true"
