@@ -31,7 +31,7 @@ import coil.request.ImageRequest
 import com.example.dishpedia.R
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
-import com.example.dishpedia.viewmodel.RecipeUiState
+import com.example.dishpedia.viewmodel.RecipesUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
 
 @Composable
@@ -147,8 +147,8 @@ fun HomeScreen(recipesViewModel: RecipesViewModel){
                 }
 
                 //TODO: Add the staggered list here
-                when(val recipesUiState = recipesViewModel.randomRecipeUiState){
-                    is RecipeUiState.Success -> RecipeStaggeredGrid(recipes = recipesUiState.recipes)
+                when(val recipesUiState = recipesViewModel.randomRecipesUiState){
+                    is RecipesUiState.Success -> RecipeStaggeredGrid(recipes = recipesUiState.recipes)
                 }
             }
         }

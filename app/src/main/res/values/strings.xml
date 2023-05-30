@@ -14,4 +14,7 @@
     <string name="sidedish">Side Dish</string>
     <string name="snacks">Snacks</string>
     <string name="soup">Soup</string>
+    <string name="cook_time">Cook Time</string>
+    <string name="servings">Servings</string>
+    <string name="description">Description</string>
 </resources>

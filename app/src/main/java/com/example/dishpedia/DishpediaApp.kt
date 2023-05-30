@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.dishpedia.ui.screens.RecipeInfoScreen
 import com.example.dishpedia.ui.screens.SearchScreen
 import com.example.dishpedia.viewmodel.RecipesViewModel
 
@@ -39,7 +40,7 @@ fun DishpediaApp(
         }
     ) { innerPadding ->
         // TODO: add NavHost
-        SearchScreen(recipesViewModel)
+        RecipeInfoScreen(recipesViewModel)
     }
 }
 

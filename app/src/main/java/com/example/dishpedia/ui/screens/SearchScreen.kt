@@ -25,19 +25,19 @@ import coil.request.ImageRequest
 import com.example.dishpedia.R
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
-import com.example.dishpedia.viewmodel.RecipeUiState
+import com.example.dishpedia.viewmodel.RecipesUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
 
 @Composable
 fun SearchScreen(recipesViewModel: RecipesViewModel){
-    val recipeUiState = recipesViewModel.searchedRecipeUiState
+    val recipeUiState = recipesViewModel.searchedRecipesUiState
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
         Column {
             SearchBar(recipesViewModel)
             when(recipeUiState){
-                is RecipeUiState.Success -> RecipeList(recipes = recipeUiState.recipes)
+                is RecipesUiState.Success -> RecipeList(recipes = recipeUiState.recipes)
             }
         }
     }
@@ -103,7 +103,9 @@ private fun RecipeCard(
     Card(
         modifier = modifier
             .padding(8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            //TODO: Add the clickable attribute and perform getRecipeById first
+        ,
         elevation = 4.dp
     ) {
         Column {
