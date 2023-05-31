@@ -49,7 +49,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
      * Call getRandomRecipes() on init so we can display status immediately.
      */
     init {
-        getRandomRecipes(API_KEY, 20)
+        getRandomRecipes(API_KEY, 10)
     }
 
     private fun getRandomRecipes(apiKey: String, number: Int){

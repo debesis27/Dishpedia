@@ -102,7 +102,7 @@ fun HomeScreen(
                     )
                     Text(
                         text = stringResource(id = R.string.categories),
-                        modifier = Modifier
+                        color = Color.DarkGray
                     )
                     Divider(
                         color = Color.LightGray,
@@ -166,7 +166,7 @@ fun HomeScreen(
                             )
                         }
                     }
-    }
+                }
                 Row(
                     modifier = Modifier
                         .padding(top = 14.dp,start = 3.dp, end = 3.dp),
@@ -182,7 +182,7 @@ fun HomeScreen(
                     )
                     Text(
                         text = stringResource(id = R.string.featured),
-                        modifier = Modifier
+                        color = Color.DarkGray
                     )
                     Divider(
                         color = Color.LightGray,

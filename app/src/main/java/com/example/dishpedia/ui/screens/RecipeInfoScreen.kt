@@ -4,6 +4,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -108,7 +109,24 @@ fun IngredientsScreen(
     recipe: Recipe,
     tabsViewModel: TabsViewModel
 ){
-
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .draggable(
+                state = tabsViewModel.dragState.value!!,
+                orientation = Orientation.Horizontal,
+                onDragStarted = { },
+                onDragStopped = {
+                    tabsViewModel.updateTabIndexBasedOnSwipe()
+                }
+            ),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top
+    ) {
+        recipe.extendedIngredients.forEach{ item ->
+            Text(text = item.original)
+        }
+    }
 }
 
 @Composable
@@ -116,5 +134,27 @@ fun InstructionsScreen(
     recipe: Recipe,
     tabsViewModel: TabsViewModel
 ){
-
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .draggable(
+                state = tabsViewModel.dragState.value!!,
+                orientation = Orientation.Horizontal,
+                onDragStarted = { },
+                onDragStopped = {
+                    tabsViewModel.updateTabIndexBasedOnSwipe()
+                }
+            ),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top
+    ){
+        recipe.analyzedInstructions.forEach{ items ->
+            items.steps.forEach{ item ->
+                Row {
+                    Text(text = item.number.toString())
+                    Text(text = item.step)
+                }
+            }
+        }
+    }
 }

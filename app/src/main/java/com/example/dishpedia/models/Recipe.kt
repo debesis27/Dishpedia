@@ -38,7 +38,7 @@ data class ExtendedIngredient(
     val measures: Measures,
     val meta: List<String> = listOf(""),
     val name: String = "",
-    val nameClean: String = "",
+//    val nameClean: String = "",
     val original: String = "",
     val originalName: String = "",
     val unit: String = ""
