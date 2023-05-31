@@ -2,6 +2,7 @@
     <string name="app_name">Dishpedia</string>
     <string name="back_button">Back</string>
     <string name="search_button">Search</string>
+    <string name="menu_button">Menu</string>
     <string name="categories">Categories</string>
     <string name="featured">Featured</string>
     <string name="maincourse">Main Course</string>
