@@ -2,6 +2,7 @@
     <string name="app_name">Dishpedia</string>
     <string name="back_button">Back</string>
     <string name="search_button">Search</string>
+    <string name="menu_button">Menu</string>
     <string name="categories">Categories</string>
     <string name="featured">Featured</string>
     <string name="maincourse">Main Course</string>
@@ -14,4 +15,7 @@
     <string name="sidedish">Side Dish</string>
     <string name="snacks">Snacks</string>
     <string name="soup">Soup</string>
+    <string name="cook_time">Cook Time</string>
+    <string name="servings">Servings</string>
+    <string name="description">Description</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.dishpedia.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,24 +21,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.dishpedia.DishpediaScreen
 import com.example.dishpedia.R
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
-import com.example.dishpedia.viewmodel.RecipeUiState
+import com.example.dishpedia.viewmodel.RecipesUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
 
 @Composable
-fun SearchScreen(recipesViewModel: RecipesViewModel){
-    val recipeUiState = recipesViewModel.searchedRecipeUiState
+fun SearchScreen(
+    recipesViewModel: RecipesViewModel,
+    navController: NavController
+){
+    val recipeUiState = recipesViewModel.searchedRecipesUiState
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
         Column {
             SearchBar(recipesViewModel)
             when(recipeUiState){
-                is RecipeUiState.Success -> RecipeList(recipes = recipeUiState.recipes)
+                is RecipesUiState.Success -> RecipeList(recipeUiState.recipes, recipesViewModel, navController)
             }
         }
     }
@@ -98,12 +104,19 @@ fun SearchBar(recipesViewModel: RecipesViewModel){
 @Composable
 private fun RecipeCard(
     recipe: Recipe,
+    recipesViewModel: RecipesViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier
 ){
     Card(
         modifier = modifier
             .padding(8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable {
+                recipesViewModel.getRecipeById(recipe.id)
+                navController.navigate(DishpediaScreen.RecipeInfo.name)
+            }
+        ,
         elevation = 4.dp
     ) {
         Column {
@@ -129,11 +142,13 @@ private fun RecipeCard(
 
 @Composable
 private fun RecipeList(
-    recipes: Recipes
+    recipes: Recipes,
+    recipesViewModel: RecipesViewModel,
+    navController: NavController
 ){
     LazyColumn{
         items(recipes.recipes){recipe ->
-            RecipeCard(recipe = recipe)
+            RecipeCard(recipe, recipesViewModel, navController)
         }
     }
 }
