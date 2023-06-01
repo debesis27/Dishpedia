@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.text.HtmlCompat.fromHtml
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -29,6 +30,7 @@ import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.viewmodel.RecipeUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
 import com.example.dishpedia.viewmodel.TabsViewModel
+import de.charlex.compose.HtmlText
 
 @Composable
 fun RecipeInfoScreen(
@@ -100,7 +102,7 @@ fun SummaryScreen(
         Text(text = stringResource(id = R.string.servings))
         Text(text = recipe.servings.toString())
         Text(text = stringResource(id = R.string.description))
-        Text(text = recipe.summary)
+        HtmlText(text = recipe.summary)
     }
 }
 

@@ -8,14 +8,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.dishpedia.ui.screens.HomeScreen
+import com.example.dishpedia.ui.screens.RecipeInfoScreen
 import com.example.dishpedia.ui.screens.SearchScreen
 import com.example.dishpedia.viewmodel.RecipesViewModel
 
 enum class DishpediaScreen(){
     Home,
     MyRecipes,
-    Account,
-    Search
+    Search,
+    RecipeInfo
 }
 
 @Composable
@@ -35,11 +36,15 @@ fun DishpediaApp(
         }
 
         composable(route = DishpediaScreen.Search.name){
-            SearchScreen(recipesViewModel)
+            SearchScreen(recipesViewModel, navController)
         }
 
         composable(route = DishpediaScreen.MyRecipes.name){
             //TODO: Add My Recipes Screen
+        }
+
+        composable(route = DishpediaScreen.RecipeInfo.name){
+            RecipeInfoScreen(recipesViewModel)
         }
     }
 

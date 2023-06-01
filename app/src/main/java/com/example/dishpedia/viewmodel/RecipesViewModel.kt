@@ -43,19 +43,20 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
      */
     var randomRecipesUiState: RecipesUiState by mutableStateOf(RecipesUiState.Loading)
     var searchedRecipesUiState: RecipesUiState by mutableStateOf(RecipesUiState.Loading)
+    var categoryRecipeUiState: RecipesUiState by mutableStateOf(RecipesUiState.Loading)
     var recipeUiState: RecipeUiState by mutableStateOf(RecipeUiState.Loading)
 
     /**
      * Call getRandomRecipes() on init so we can display status immediately.
      */
     init {
-        getRandomRecipes(API_KEY, 10)
+        getRandomRecipes(10)
     }
 
-    private fun getRandomRecipes(apiKey: String, number: Int){
+    private fun getRandomRecipes(number: Int){
         viewModelScope.launch {
             randomRecipesUiState = try {
-                RecipesUiState.Success(repository.getRandomRecipes(apiKey, number))
+                RecipesUiState.Success(repository.getRandomRecipes(API_KEY, number))
             }catch (e: IOException){
                 RecipesUiState.Error
             }catch (e: HttpException){
@@ -77,10 +78,23 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
         }
     }
 
-    fun getRecipeById(id: Int, apiKey: String){
+    fun getCategoryRecipe(category: String){
+        val query = applyCategoryQueries(category)
+        viewModelScope.launch {
+            categoryRecipeUiState = try {
+                RecipesUiState.Success(repository.getSearchedRecipes(query))
+            }catch (e: IOException){
+                RecipesUiState.Error
+            }catch (e: HttpException){
+                RecipesUiState.Error
+            }
+        }
+    }
+
+    fun getRecipeById(id: Int){
         viewModelScope.launch {
             recipeUiState = try {
-                RecipeUiState.Success(repository.getRecipeById(id, apiKey))
+                RecipeUiState.Success(repository.getRecipeById(id, API_KEY))
             }catch (e: IOException){
                 RecipeUiState.Error
             }catch (e: HttpException){
@@ -89,7 +103,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
         }
     }
 
-    fun applyCategoryQueries(courseType: String): HashMap<String, String> {
+    private fun applyCategoryQueries(courseType: String): HashMap<String, String> {
         val queries: HashMap<String, String> = HashMap()
 
         queries[QUERY_NUMBER] = "10"
@@ -102,7 +116,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
         return queries
     }
 
-    fun applySearchQueries(searchTerm: String): HashMap<String, String> {
+    private fun applySearchQueries(searchTerm: String): HashMap<String, String> {
         val queries: HashMap<String, String> = HashMap()
 
         queries[QUERY] = searchTerm

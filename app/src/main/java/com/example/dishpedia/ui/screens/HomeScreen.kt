@@ -20,7 +20,6 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.rememberScaffoldState
@@ -40,9 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.dishpedia.DishpediaScreen
@@ -54,7 +51,6 @@ import com.example.dishpedia.ui.theme.Purple500
 import com.example.dishpedia.viewmodel.RecipesUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -74,10 +70,11 @@ fun HomeScreen(
             name = "My Recipes",
             route = "MyRecipes",
         ),
-        NavigationDrawerItems(
-            name = "Account",
-            route = "Account",
-        )
+        //TODO: Add authorization, then accounts
+//        NavigationDrawerItems(
+//            name = "Account",
+//            route = "Account",
+//        )
     )
 
     Scaffold(
@@ -86,7 +83,7 @@ fun HomeScreen(
         drawerContent = { HomeScreenDrawer(navItems, navController, coroutineScope, scaffoldState) },
         drawerGesturesEnabled = true,
         content = {
-            Column(modifier = Modifier) {
+            Column(modifier = Modifier.padding(it)) {
                 Row(
                     modifier = Modifier
                         .padding(top = 14.dp,start = 3.dp, end = 3.dp),
@@ -196,7 +193,7 @@ fun HomeScreen(
 
                 //TODO: Add the staggered list here
                 when(val recipesUiState = recipesViewModel.randomRecipesUiState){
-                    is RecipesUiState.Success -> RecipeStaggeredGrid(recipes = recipesUiState.recipes)
+                    is RecipesUiState.Success -> RecipeStaggeredGrid(recipesUiState.recipes, recipesViewModel, navController)
                 }
             }
         }
@@ -239,13 +236,19 @@ fun Carousel(
 @Composable
 fun RecipePhotoCard(
     recipe: Recipe,
+    recipesViewModel: RecipesViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier
 ){
     Card(
         modifier = modifier
             .padding(4.dp)
             .fillMaxWidth()
-            .aspectRatio(1f),
+            .aspectRatio(1f)
+            .clickable {
+                recipesViewModel.getRecipeById(recipe.id)
+                navController.navigate(DishpediaScreen.RecipeInfo.name)
+            },
         elevation = 8.dp
     ) {
         AsyncImage(
@@ -265,6 +268,8 @@ fun RecipePhotoCard(
 @Composable
 fun RecipeStaggeredGrid(
     recipes: Recipes,
+    recipesViewModel: RecipesViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier
 ){
     val items = recipes.recipes
@@ -276,7 +281,7 @@ fun RecipeStaggeredGrid(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ){
         items(items){
-            recipe -> RecipePhotoCard(recipe = recipe)
+            recipe -> RecipePhotoCard(recipe, recipesViewModel, navController)
         }
     }
 }
