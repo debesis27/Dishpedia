@@ -98,7 +98,7 @@ fun SummaryScreen(
         }
         Text(text = recipe.title)
         Text(text = stringResource(id = R.string.cook_time))
-        Text(text = recipe.cookingMinutes.toString())
+        Text(text = recipe.readyInMinutes.toString())
         Text(text = stringResource(id = R.string.servings))
         Text(text = recipe.servings.toString())
         Text(text = stringResource(id = R.string.description))
