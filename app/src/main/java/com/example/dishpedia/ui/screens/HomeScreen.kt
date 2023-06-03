@@ -5,7 +5,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -15,6 +17,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
@@ -44,10 +47,12 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.dishpedia.DishpediaScreen
 import com.example.dishpedia.R
+import com.example.dishpedia.models.CategoryListItemsProvider
 import com.example.dishpedia.models.NavigationDrawerItems
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
 import com.example.dishpedia.ui.theme.Purple500
+import com.example.dishpedia.viewmodel.CategoryRecipesUiState
 import com.example.dishpedia.viewmodel.RecipesUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -119,45 +124,38 @@ fun HomeScreen(
                     contentWidth = 250.dp,
                     contentHeight = 200.dp
                 ) { modifier, index ->
-                    val image = when(index){
-                        0 -> R.drawable.maincourse
-                        1 -> R.drawable.bread
-                        2 -> R.drawable.appetizer
-                        3 -> R.drawable.beverage
-                        4 -> R.drawable.breakfast
-                        5 -> R.drawable.desserts
-                        6 -> R.drawable.salad
-                        7 -> R.drawable.sidedish
-                        8 -> R.drawable.snacks
-                        else -> R.drawable.soup
+                    val category = when(index){
+                        0 -> CategoryListItemsProvider.mainCourse
+                        1 -> CategoryListItemsProvider.bread
+                        2 -> CategoryListItemsProvider.soup
+                        3 -> CategoryListItemsProvider.dessert
+                        4 -> CategoryListItemsProvider.beverage
+                        5 -> CategoryListItemsProvider.appetizer
+                        6 -> CategoryListItemsProvider.breakfast
+                        7 -> CategoryListItemsProvider.salad
+                        8 -> CategoryListItemsProvider.sideDish
+                        else -> CategoryListItemsProvider.snacks
                     }
-                    val text = when(index){
-                        0 -> R.string.maincourse
-                        1 -> R.string.bread
-                        2 -> R.string.appetizer
-                        3 -> R.string.beverage
-                        4 -> R.string.breakfast
-                        5 -> R.string.desserts
-                        6 -> R.string.salad
-                        7 -> R.string.sidedish
-                        8 -> R.string.snacks
-                        else -> R.string.soup
-                    }
+
                     Box(
                         modifier = modifier
-                            .background(Color.White),
+                            .background(Color.White)
+                            .clickable {
+                                recipesViewModel.getCategoryRecipe(category)
+//                                navController.navigate(DishpediaScreen.RecipeInfo.name)
+                            },
                         contentAlignment = Alignment.TopCenter
                     ) {
                         Column {
                             Image(
-                                painter = painterResource(id = image),
+                                painter = painterResource(id = category.image),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .height(150.dp)
                                     .width(150.dp)
                             )
                             Text(
-                                text = stringResource(id = text),
+                                text = category.text,
                                 modifier = Modifier.width(150.dp),
                                 textAlign = TextAlign.Center
                             )
@@ -178,7 +176,11 @@ fun HomeScreen(
                             .clip(CircleShape)
                     )
                     Text(
-                        text = stringResource(id = R.string.featured),
+                        text = when(recipesViewModel.categoryRecipeUiState){
+                                   is CategoryRecipesUiState.Loading -> stringResource(id = R.string.featured)
+                                   is CategoryRecipesUiState.Success -> (recipesViewModel.categoryRecipeUiState as CategoryRecipesUiState.Success).category.text
+                                   is CategoryRecipesUiState.Error -> stringResource(id = R.string.error)
+                               },
                         color = Color.DarkGray
                     )
                     Divider(
@@ -191,10 +193,13 @@ fun HomeScreen(
                     )
                 }
 
-                //TODO: Add the staggered list here
-                when(val recipesUiState = recipesViewModel.randomRecipesUiState){
-                    is RecipesUiState.Success -> RecipeStaggeredGrid(recipesUiState.recipes, recipesViewModel, navController)
+                when(val categoryUiState = recipesViewModel.categoryRecipeUiState){
+                    is CategoryRecipesUiState.Loading -> when(val recipesUiState = recipesViewModel.randomRecipesUiState){
+                        is RecipesUiState.Success -> RecipeList(recipesUiState.recipes, recipesViewModel, navController)
+                    }
+                    is CategoryRecipesUiState.Success -> RecipeList(categoryUiState.recipes, recipesViewModel, navController)
                 }
+
             }
         }
     )
@@ -219,22 +224,21 @@ fun Carousel(
             verticalAlignment = Alignment.CenterVertically
         ) {
             items(
-                count = count,
-                itemContent = { globalIndex ->
-                    content(
-                        index = globalIndex % count,
-                        modifier = Modifier
-                            .width(contentWidth)
-                            .height(contentHeight)
-                    )
-                }
-            )
+                count = count
+            ) { globalIndex ->
+                content(
+                    index = globalIndex % count,
+                    modifier = Modifier
+                        .width(contentWidth)
+                        .height(contentHeight)
+                )
+            }
         }
     }
 }
 
 @Composable
-fun RecipePhotoCard(
+private fun RecipeCard(
     recipe: Recipe,
     recipesViewModel: RecipesViewModel,
     navController: NavController,
@@ -242,46 +246,45 @@ fun RecipePhotoCard(
 ){
     Card(
         modifier = modifier
-            .padding(4.dp)
+            .padding(8.dp)
             .fillMaxWidth()
-            .aspectRatio(1f)
             .clickable {
                 recipesViewModel.getRecipeById(recipe.id)
                 navController.navigate(DishpediaScreen.RecipeInfo.name)
-            },
-        elevation = 8.dp
+            }
+        ,
+        elevation = 4.dp
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(context = LocalContext.current)
-                .data(recipe.image)
-                .crossfade(true)
-                .build(),
-            contentDescription = recipe.title,
-            error = painterResource(id = R.drawable.ic_broken_image),
-            placeholder = painterResource(id = R.drawable.loading_img),
-            contentScale = ContentScale.FillBounds
-        )
+        Column {
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(recipe.image)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = recipe.title,
+                modifier = Modifier.fillMaxWidth(),
+                error = painterResource(id = R.drawable.ic_connection_error),
+                placeholder = painterResource(id = R.drawable.loading_img),
+                contentScale = ContentScale.FillWidth
+            )
+            Text(
+                text = recipe.title,
+                modifier = Modifier.padding(16.dp),
+                style = MaterialTheme.typography.h6
+            )
+        }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RecipeStaggeredGrid(
+private fun RecipeList(
     recipes: Recipes,
     recipesViewModel: RecipesViewModel,
-    navController: NavController,
-    modifier: Modifier = Modifier
+    navController: NavController
 ){
-    val items = recipes.recipes
-
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ){
-        items(items){
-            recipe -> RecipePhotoCard(recipe, recipesViewModel, navController)
+    LazyColumn{
+        items(recipes.recipes){recipe ->
+            RecipeCard(recipe, recipesViewModel, navController)
         }
     }
 }

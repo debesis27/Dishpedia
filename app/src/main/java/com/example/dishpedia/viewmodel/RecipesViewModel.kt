@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.dishpedia.DishpediaApplication
+import com.example.dishpedia.models.CategoryListItems
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
 import com.example.dishpedia.repository.RecipeRepository
@@ -37,13 +38,19 @@ sealed interface RecipeUiState{
     object Loading : RecipeUiState
 }
 
+sealed interface CategoryRecipesUiState{
+    data class Success(val recipes: Recipes, val category: CategoryListItems) : CategoryRecipesUiState
+    object Error : CategoryRecipesUiState
+    object Loading : CategoryRecipesUiState
+}
+
 class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
     /**
      * The mutable State that stores the status of the most recent request
      */
     var randomRecipesUiState: RecipesUiState by mutableStateOf(RecipesUiState.Loading)
     var searchedRecipesUiState: RecipesUiState by mutableStateOf(RecipesUiState.Loading)
-    var categoryRecipeUiState: RecipesUiState by mutableStateOf(RecipesUiState.Loading)
+    var categoryRecipeUiState: CategoryRecipesUiState by mutableStateOf(CategoryRecipesUiState.Loading)
     var recipeUiState: RecipeUiState by mutableStateOf(RecipeUiState.Loading)
 
     /**
@@ -78,15 +85,15 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
         }
     }
 
-    fun getCategoryRecipe(category: String){
-        val query = applyCategoryQueries(category)
+    fun getCategoryRecipe(category: CategoryListItems){
+        val query = applyCategoryQueries(category.query)
         viewModelScope.launch {
             categoryRecipeUiState = try {
-                RecipesUiState.Success(repository.getSearchedRecipes(query))
+                CategoryRecipesUiState.Success(repository.getSearchedRecipes(query), category)
             }catch (e: IOException){
-                RecipesUiState.Error
+                CategoryRecipesUiState.Error
             }catch (e: HttpException){
-                RecipesUiState.Error
+                CategoryRecipesUiState.Error
             }
         }
     }
