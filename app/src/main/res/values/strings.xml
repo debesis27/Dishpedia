@@ -19,4 +19,5 @@
     <string name="servings">Servings</string>
     <string name="description">Description</string>
     <string name="error">Error</string>
+    <string name="my_recipes">My Recipes</string>
 </resources>
