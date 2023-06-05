@@ -43,7 +43,10 @@ fun DishpediaApp(
         }
 
         composable(route = NavigationItemsProvider.MyRecipeEntry.route){
-            MyRecipeEntryScreen(navController)
+            MyRecipeEntryScreen(
+                navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() }
+            )
         }
     }
 }

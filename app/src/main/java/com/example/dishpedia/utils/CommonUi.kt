@@ -16,8 +16,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -40,7 +45,9 @@ import com.example.dishpedia.models.NavigationItemsProvider
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
 import com.example.dishpedia.ui.theme.Purple500
+import com.example.dishpedia.viewmodel.RecipeUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
+import com.example.dishpedia.viewmodel.uiState.MyRecipeUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -162,5 +169,88 @@ fun NavigationDrawer(
                 }
             }
         }
+    }
+}
+
+/**
+ * Composable for creating or updating a recipe in the database
+ */
+@Composable
+fun MyRecipeEditBody(
+    myRecipeUiState: MyRecipeUiState,
+    onRecipeValueChange: (MyRecipeUiState) -> Unit,
+    onSaveClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(32.dp)
+    ) {
+        MyRecipeInputForm(
+            myRecipeUiState = myRecipeUiState,
+            onRecipeValueChange = onRecipeValueChange
+        )
+        Button(
+            onClick = onSaveClick,
+            enabled = myRecipeUiState.actionEnabled,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = stringResource(id = R.string.save_button))
+        }
+    }
+}
+
+/**
+ * Composable consisting of all text fields in [MyRecipeEditBody]
+ */
+@Composable
+fun MyRecipeInputForm(
+    myRecipeUiState: MyRecipeUiState,
+    onRecipeValueChange: (MyRecipeUiState) -> Unit = {},
+    modifier: Modifier = Modifier
+){
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        //TODO: Add a method to get image
+
+        OutlinedTextField(
+            value = myRecipeUiState.title,
+            onValueChange = { onRecipeValueChange(myRecipeUiState.copy(title = it)) },
+            label = { Text(stringResource(id = R.string.recipe_title_label))},
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            singleLine = true
+        )
+        OutlinedTextField(
+            value = myRecipeUiState.summary,
+            onValueChange = { onRecipeValueChange(myRecipeUiState.copy(summary = it)) },
+            label = { Text(stringResource(id = R.string.recipe_summary_label))},
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            singleLine = true
+        )
+        OutlinedTextField(
+            value = myRecipeUiState.readyInMinutes,
+            onValueChange = { onRecipeValueChange(myRecipeUiState.copy(readyInMinutes = it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            label = { Text(stringResource(id = R.string.recipe_ready_in_minutes_label))},
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            singleLine = true
+        )
+        OutlinedTextField(
+            value = myRecipeUiState.servings,
+            onValueChange = { onRecipeValueChange(myRecipeUiState.copy(servings = it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            label = { Text(stringResource(id = R.string.recipe_servings_label)) },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            singleLine = true
+        )
+        //TODO: Add an OutlinedTextField with trailing icon of add, then add more OutlinedTextField depending on it
     }
 }

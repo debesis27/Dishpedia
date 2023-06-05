@@ -16,8 +16,8 @@ data class MyRecipe(
     val image: String,
     val title: String = "",
     val summary: String = "",
-    val readyInMinutes: Int = 0,
-    val servings: Int = 0,
+    val readyInMinutes: Double = 0.0,
+    val servings: Double = 0.0,
     val ingredient: ArrayList<String>,
     val instructions: ArrayList<String>
 )

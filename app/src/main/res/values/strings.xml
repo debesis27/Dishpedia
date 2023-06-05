@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Dishpedia</string>
     <string name="back_button">Back</string>
+    <string name="save_button">Save</string>
     <string name="search_button">Search</string>
     <string name="menu_button">Menu</string>
     <string name="categories">Categories</string>
@@ -20,4 +21,8 @@
     <string name="description">Description</string>
     <string name="error">Error</string>
     <string name="my_recipes">My Recipes</string>
+    <string name="recipe_title_label">Recipe Name *</string>
+    <string name="recipe_summary_label">Recipe Summary</string>
+    <string name="recipe_ready_in_minutes_label">Cook Time (in minutes)</string>
+    <string name="recipe_servings_label">Servings</string>
 </resources>
