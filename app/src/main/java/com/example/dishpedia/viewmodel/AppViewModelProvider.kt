@@ -30,6 +30,21 @@ object AppViewModelProvider {
                 this.createSavedStateHandle()
             )
         }
+
+        //Initializer for MyRecipeEntryViewModel
+        initializer {
+            MyRecipeEntryViewModel(
+                dishpediaApplication().container.myRecipeRepository
+            )
+        }
+
+        //Initializer for MyRecipeEditViewModel
+        initializer {
+            MyRecipeEditViewModel(
+                dishpediaApplication().container.myRecipeRepository,
+                this.createSavedStateHandle()
+            )
+        }
     }
 }
 

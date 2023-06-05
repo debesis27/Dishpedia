@@ -18,18 +18,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.dishpedia.R
 import com.example.dishpedia.models.NavigationDrawerItemsProvider
+import com.example.dishpedia.models.NavigationItemsProvider
 import com.example.dishpedia.utils.NavigationDrawer
+import com.example.dishpedia.viewmodel.AppViewModelProvider
 import com.example.dishpedia.viewmodel.MyRecipeListViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun MyRecipeScreen(
-    myRecipeListViewModel: MyRecipeListViewModel,
-    navController: NavController
+    navController: NavController,
+    myRecipeListViewModel: MyRecipeListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ){
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
@@ -44,7 +47,7 @@ fun MyRecipeScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO: Add navigation to EditMyRecipeScreen*/ }) {
+            FloatingActionButton(onClick = { navController.navigate(NavigationItemsProvider.MyRecipeEntry.route) }) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Item",

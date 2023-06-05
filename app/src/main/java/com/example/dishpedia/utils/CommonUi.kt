@@ -34,9 +34,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.dishpedia.DishpediaScreen
 import com.example.dishpedia.R
-import com.example.dishpedia.models.NavigationDrawerItems
+import com.example.dishpedia.models.NavigationItem
+import com.example.dishpedia.models.NavigationItemsProvider
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
 import com.example.dishpedia.ui.theme.Purple500
@@ -76,7 +76,7 @@ private fun RecipeCard(
             .fillMaxWidth()
             .clickable {
                 recipesViewModel.getRecipeById(recipe.id)
-                navController.navigate(DishpediaScreen.RecipeInfo.name)
+                navController.navigate(NavigationItemsProvider.recipeInfo.route)
             }
         ,
         elevation = 4.dp
@@ -107,7 +107,7 @@ private fun RecipeCard(
  */
 @Composable
 fun NavigationDrawer(
-    navItems: List<NavigationDrawerItems>,
+    navItems: List<NavigationItem>,
     navController: NavController,
     coroutineScope: CoroutineScope,
     scaffoldState: ScaffoldState
