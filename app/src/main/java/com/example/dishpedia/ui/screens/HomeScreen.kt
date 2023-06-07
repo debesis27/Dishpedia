@@ -44,6 +44,7 @@ import com.example.dishpedia.R
 import com.example.dishpedia.models.CategoryListItemsProvider
 import com.example.dishpedia.models.NavigationDrawerItemsProvider
 import com.example.dishpedia.models.NavigationItemsProvider
+import com.example.dishpedia.utils.ErrorScreen
 import com.example.dishpedia.utils.NavigationDrawer
 import com.example.dishpedia.utils.RecipeList
 import com.example.dishpedia.viewmodel.CategoryRecipesUiState
@@ -185,6 +186,8 @@ fun HomeScreen(
                         recipesViewModel,
                         navController
                     )
+
+                    else -> ErrorScreen()
                 }
 
                 is CategoryRecipesUiState.Success -> RecipeList(
@@ -192,6 +195,7 @@ fun HomeScreen(
                     recipesViewModel,
                     navController
                 )
+                is CategoryRecipesUiState.Error -> ErrorScreen()
             }
 
         }

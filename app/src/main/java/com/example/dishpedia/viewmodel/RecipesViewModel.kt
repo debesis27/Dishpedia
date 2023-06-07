@@ -57,7 +57,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
      * Call getRandomRecipes() on init so we can display status immediately.
      */
     init {
-        getRandomRecipes(10)
+        getRandomRecipes(0) //TODO: Change it later to 20 or so
     }
 
     private fun getRandomRecipes(number: Int){

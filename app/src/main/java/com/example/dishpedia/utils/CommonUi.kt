@@ -1,5 +1,9 @@
 package com.example.dishpedia.utils
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,12 +23,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -215,7 +226,14 @@ fun MyRecipeInputForm(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        //TODO: Add a method to get image
+        //TODO: Add a method to save the obtained image
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+        ) {
+            ImagePicker()
+        }
 
         OutlinedTextField(
             value = myRecipeUiState.title,
@@ -252,5 +270,86 @@ fun MyRecipeInputForm(
             singleLine = true
         )
         //TODO: Add an OutlinedTextField with trailing icon of add, then add more OutlinedTextField depending on it
+        myRecipeUiState.ingredient.add("Smth")
+        OutlinedTextField(
+            value = myRecipeUiState.ingredient[0],
+            onValueChange = { myRecipeUiState.ingredient.set(0, it) },
+            label = { Text("Ingredient") },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            singleLine = true
+        )
+    }
+}
+
+@Composable
+fun ImagePicker(){
+    var selectedImageUri by remember{ mutableStateOf<Uri?>(null) }
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri -> selectedImageUri = uri }
+    )
+
+    AsyncImage(
+        model = selectedImageUri,
+        contentDescription = null,
+        modifier = Modifier.fillMaxWidth(),
+        contentScale = ContentScale.Inside,
+        placeholder = painterResource(id = R.drawable.image_placeholder)
+    )
+
+    Button(onClick = {
+        photoPickerLauncher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
+    }) {
+        Text(text = "Pick photo")
+    }
+}
+
+//@Composable
+//fun AddTextField(
+//    myRecipeUiState: MyRecipeUiState,
+//    onRecipeValueChange: (MyRecipeUiState) -> Unit,
+//){
+//    val ingredients = remember{ ArrayList<String>() }
+//    val textFields = remember{ mutableStateOf(1) }
+//    ingredients.add("")
+//
+//    Column(
+//        modifier = Modifier.fillMaxWidth(),
+//        verticalArrangement = Arrangement.spacedBy(16.dp)
+//    ){
+//            for (i in 0 until textFields.value){
+//                OutlinedTextField(
+//                    value = ingredients[i],
+//                    onValueChange = {
+//                        ingredients[i] = it
+//                        onRecipeValueChange(myRecipeUiState.copy(ingredient = ingredients))
+//                    },
+//                    label = { Text(text = "Ingredient: ${i+1}") },
+//                    modifier = Modifier.fillMaxWidth(),
+//                    trailingIcon = {
+//                        if(i == textFields.value-1){
+//                            Icon(
+//                                imageVector = Icons.Default.Add,
+//                                contentDescription = null,
+//                                modifier = Modifier.clickable {
+////                                    ingredients.add("")
+//                                    textFields.value = textFields.value + 1
+//                                }
+//                            )
+//                        }
+//                    }
+//                )
+//        }
+//    }
+//}
+
+//TODO: Make a better Error Screen
+@Composable
+fun ErrorScreen(){
+    Box(modifier = Modifier.fillMaxWidth()){
+        Text(text = "ERROR")
     }
 }

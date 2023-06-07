@@ -46,6 +46,7 @@ fun SearchScreen(
             SearchBar(recipesViewModel)
             when(recipeUiState){
                 is RecipesUiState.Success -> RecipeList(recipeUiState.recipes, recipesViewModel, navController)
+                else -> {}
             }
         }
     }

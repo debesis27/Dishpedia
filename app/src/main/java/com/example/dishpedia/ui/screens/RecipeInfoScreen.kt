@@ -27,6 +27,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.dishpedia.R
 import com.example.dishpedia.models.Recipe
+import com.example.dishpedia.utils.ErrorScreen
 import com.example.dishpedia.viewmodel.RecipeUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
 import com.example.dishpedia.viewmodel.TabsViewModel
@@ -57,6 +58,8 @@ fun RecipeInfoScreen(
                 1 -> IngredientsScreen(recipeUiState.recipe, tabsViewModel)
                 else -> InstructionsScreen(recipeUiState.recipe, tabsViewModel)
             }
+
+            else -> ErrorScreen()
         }
 
     }

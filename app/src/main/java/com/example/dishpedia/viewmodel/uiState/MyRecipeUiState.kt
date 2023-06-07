@@ -9,7 +9,7 @@ import com.example.dishpedia.data.MyRecipe
  */
 data class MyRecipeUiState(
     val id: Int = 0,
-    val image: Uri = "".toUri(),//TODO: Add a placeholder pic in storage, then its uri here
+    val image: Uri = "".toUri(), //TODO: Add a placeholder pic in storage, then its uri here
     val title: String = "",
     val summary: String = "",
     val readyInMinutes: String = "",
