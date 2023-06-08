@@ -3,11 +3,15 @@ package com.example.dishpedia
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.dishpedia.models.NavigationItemsProvider
 import com.example.dishpedia.ui.screens.HomeScreen
+import com.example.dishpedia.ui.screens.MyRecipeDetailsScreen
+import com.example.dishpedia.ui.screens.MyRecipeEditScreen
 import com.example.dishpedia.ui.screens.MyRecipeEntryScreen
 import com.example.dishpedia.ui.screens.MyRecipeScreen
 import com.example.dishpedia.ui.screens.RecipeInfoScreen
@@ -34,18 +38,44 @@ fun DishpediaApp(
             SearchScreen(recipesViewModel, navController)
         }
 
-        composable(route = NavigationItemsProvider.MyRecipes.route){
-            MyRecipeScreen(navController)
-        }
-
         composable(route = NavigationItemsProvider.recipeInfo.route){
             RecipeInfoScreen(recipesViewModel)
+        }
+
+        composable(route = NavigationItemsProvider.MyRecipes.route){
+            MyRecipeScreen(
+                navController = navController
+            )
         }
 
         composable(route = NavigationItemsProvider.MyRecipeEntry.route){
             MyRecipeEntryScreen(
                 navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() },
+            )
+        }
+
+        composable(
+            route = NavigationItemsProvider.MyRecipeEdit.routeWithArgs,
+            arguments = listOf(navArgument(NavigationItemsProvider.MyRecipeEdit.recipeIdArg){
+                type = NavType.IntType
+            })
+        ){
+            MyRecipeEditScreen(
+                navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
+            )
+        }
+
+        composable(
+            route = NavigationItemsProvider.MyRecipeDetails.routeWithArgs,
+            arguments = listOf(navArgument(NavigationItemsProvider.MyRecipeDetails.recipeIdArg){
+                type = NavType.IntType
+            })
+        ){
+            MyRecipeDetailsScreen(
+                navigateToEditMyRecipe = { navController.navigate("${NavigationItemsProvider.MyRecipeEdit.route}/$it") },
+                onNavigateUp = { navController.navigateUp() },
             )
         }
     }

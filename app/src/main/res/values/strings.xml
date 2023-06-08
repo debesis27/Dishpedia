@@ -6,14 +6,14 @@
     <string name="menu_button">Menu</string>
     <string name="categories">Categories</string>
     <string name="featured">Featured</string>
-    <string name="maincourse">Main Course</string>
+    <string name="main_course">Main Course</string>
     <string name="appetizer">Appetizers</string>
     <string name="bread">Breads</string>
     <string name="beverage">Beverages</string>
     <string name="breakfast">Breakfast</string>
     <string name="desserts">Desserts</string>
     <string name="salad">Salad</string>
-    <string name="sidedish">Side Dish</string>
+    <string name="side_dish">Side Dish</string>
     <string name="snacks">Snacks</string>
     <string name="soup">Soup</string>
     <string name="cook_time">Cook Time</string>
@@ -25,4 +25,6 @@
     <string name="recipe_summary_label">Recipe Summary</string>
     <string name="recipe_ready_in_minutes_label">Cook Time (in minutes)</string>
     <string name="recipe_servings_label">Servings</string>
+    <string name="recipe_ingredients_label">Ingredients (Enter each ingredient in a new line) *</string>
+    <string name="recipe_instructions_label">Instructions (Enter each instruction in a new line) *</string>
 </resources>

@@ -4,15 +4,24 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,54 +30,91 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.text.HtmlCompat.fromHtml
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.dishpedia.R
-import com.example.dishpedia.models.Recipe
-import com.example.dishpedia.utils.ErrorScreen
-import com.example.dishpedia.viewmodel.RecipeUiState
-import com.example.dishpedia.viewmodel.RecipesViewModel
+import com.example.dishpedia.viewmodel.AppViewModelProvider
+import com.example.dishpedia.viewmodel.MyRecipeDetailViewModel
 import com.example.dishpedia.viewmodel.TabsViewModel
-import de.charlex.compose.HtmlText
+import com.example.dishpedia.viewmodel.uiState.MyRecipeUiState
 
 @Composable
-fun RecipeInfoScreen(
-    recipeViewModel: RecipesViewModel,
+fun MyRecipeDetailsScreen(
+    navigateToEditMyRecipe: (Int) -> Unit,
+    onNavigateUp: () -> Unit,
+    myRecipeDetailViewModel: MyRecipeDetailViewModel = viewModel(factory = AppViewModelProvider.Factory),
     tabsViewModel: TabsViewModel = viewModel()
 ){
     val tabIndex = tabsViewModel.tabIndex.observeAsState()
-    val recipeUiState = recipeViewModel.recipeUiState
+    val myRecipeUiState by myRecipeDetailViewModel.uiState.collectAsState()
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        TabRow(selectedTabIndex = tabIndex.value!!) {
-            tabsViewModel.tabs.forEachIndexed{ index, title ->
-                Tab(
-                    selected = tabIndex.value!! == index,
-                    onClick = { tabsViewModel.updateTabIndex(index) }
-                ) {
-                    Text(text = title)
+    Scaffold(
+        topBar = {
+            MyRecipeDetailsScreenAppBar(
+                myRecipeUiState = myRecipeUiState,
+                navigateUp = onNavigateUp,
+                navigateToEditMyRecipe = navigateToEditMyRecipe
+            )
+        }
+    ) {innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(innerPadding)
+        ) {
+            TabRow(selectedTabIndex = tabIndex.value!!) {
+                tabsViewModel.tabs.forEachIndexed{ index, title ->
+                    Tab(
+                        selected = tabIndex.value!! == index,
+                        onClick = { tabsViewModel.updateTabIndex(index) }
+                    ) {
+                        Text(text = title)
+                    }
                 }
             }
-        }
 
-        when(recipeUiState){
-            is RecipeUiState.Success -> when(tabIndex.value){
-                0 -> SummaryScreen(recipeUiState.recipe, tabsViewModel)
-                1 -> IngredientsScreen(recipeUiState.recipe, tabsViewModel)
-                2 -> InstructionsScreen(recipeUiState.recipe, tabsViewModel)
+            when(tabIndex.value){
+                0 -> SummaryScreen(myRecipeUiState, tabsViewModel)
+                1 -> IngredientsScreen(myRecipeUiState, tabsViewModel)
+                2 -> InstructionsScreen(myRecipeUiState, tabsViewModel)
             }
-
-            else -> ErrorScreen()
         }
-
     }
 }
 
 @Composable
+fun MyRecipeDetailsScreenAppBar(
+    myRecipeUiState: MyRecipeUiState,
+    navigateUp: () -> Unit,
+    navigateToEditMyRecipe: (Int) -> Unit,
+    modifier: Modifier = Modifier
+){
+    TopAppBar(
+        title = { Text(myRecipeUiState.title)},
+        modifier = modifier,
+        navigationIcon = {
+            IconButton(onClick = navigateUp) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = stringResource(id = R.string.back_button)
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = { navigateToEditMyRecipe(myRecipeUiState.id) }) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = "Edit Recipe"
+                )
+            }
+        }
+    )
+}
+
+@Composable
 private fun SummaryScreen(
-    recipe: Recipe,
+    myRecipeUiState: MyRecipeUiState,
     tabsViewModel: TabsViewModel
 ){
     Column(
@@ -91,28 +137,28 @@ private fun SummaryScreen(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(recipe.image)
+                    .data(myRecipeUiState.image)
                     .crossfade(true)
                     .build(),
-                contentDescription = recipe.title,
+                contentDescription = myRecipeUiState.title,
                 error = painterResource(id = R.drawable.ic_broken_image),
                 placeholder = painterResource(id = R.drawable.loading_img),
                 contentScale = ContentScale.FillWidth
             )
         }
-        Text(text = recipe.title)
+        Text(text = myRecipeUiState.title)
         Text(text = stringResource(id = R.string.cook_time))
-        Text(text = recipe.readyInMinutes.toString())
+        Text(text = myRecipeUiState.readyInMinutes.toString())
         Text(text = stringResource(id = R.string.servings))
-        Text(text = recipe.servings.toString())
+        Text(text = myRecipeUiState.servings.toString())
         Text(text = stringResource(id = R.string.description))
-        HtmlText(text = recipe.summary)
+        Text(text = myRecipeUiState.summary)
     }
 }
 
 @Composable
 private fun IngredientsScreen(
-    recipe: Recipe,
+    myRecipeUiState: MyRecipeUiState,
     tabsViewModel: TabsViewModel
 ){
     Column(
@@ -129,15 +175,17 @@ private fun IngredientsScreen(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-        recipe.extendedIngredients.forEach{ item ->
-            Text(text = item.original)
+        var i = 1
+        myRecipeUiState.ingredient.lines().forEach{ item ->
+            Text(text = "$i) $item")
+            i += 1
         }
     }
 }
 
 @Composable
 private fun InstructionsScreen(
-    recipe: Recipe,
+    myRecipeUiState: MyRecipeUiState,
     tabsViewModel: TabsViewModel
 ){
     Column(
@@ -154,13 +202,10 @@ private fun InstructionsScreen(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ){
-        recipe.analyzedInstructions.forEach{ items ->
-            items.steps.forEach{ item ->
-                Row {
-                    Text(text = item.number.toString())
-                    Text(text = item.step)
-                }
-            }
+        var i = 1
+        myRecipeUiState.instructions.lines().forEach{ items ->
+            Text(text = "$i) $items")
+            i += 1
         }
     }
 }

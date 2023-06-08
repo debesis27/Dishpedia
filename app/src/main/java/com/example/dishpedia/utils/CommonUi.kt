@@ -46,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
@@ -232,7 +233,10 @@ fun MyRecipeInputForm(
                 .fillMaxWidth()
                 .height(100.dp)
         ) {
-            ImagePicker()
+            ImagePicker(
+                myRecipeUiState = myRecipeUiState,
+                onRecipeValueChange = onRecipeValueChange
+            )
         }
 
         OutlinedTextField(
@@ -243,6 +247,7 @@ fun MyRecipeInputForm(
             enabled = true,
             singleLine = true
         )
+
         OutlinedTextField(
             value = myRecipeUiState.summary,
             onValueChange = { onRecipeValueChange(myRecipeUiState.copy(summary = it)) },
@@ -251,6 +256,7 @@ fun MyRecipeInputForm(
             enabled = true,
             singleLine = true
         )
+
         OutlinedTextField(
             value = myRecipeUiState.readyInMinutes,
             onValueChange = { onRecipeValueChange(myRecipeUiState.copy(readyInMinutes = it)) },
@@ -260,6 +266,7 @@ fun MyRecipeInputForm(
             enabled = true,
             singleLine = true
         )
+
         OutlinedTextField(
             value = myRecipeUiState.servings,
             onValueChange = { onRecipeValueChange(myRecipeUiState.copy(servings = it)) },
@@ -269,29 +276,41 @@ fun MyRecipeInputForm(
             enabled = true,
             singleLine = true
         )
+
         //TODO: Add an OutlinedTextField with trailing icon of add, then add more OutlinedTextField depending on it
-        myRecipeUiState.ingredient.add("Smth")
+        //Tried doing it, but didn't work out since OutlinedTextField only allows primitive data types (its a known bug apparently) (see AddTextField function)
         OutlinedTextField(
-            value = myRecipeUiState.ingredient[0],
-            onValueChange = { myRecipeUiState.ingredient.set(0, it) },
-            label = { Text("Ingredient") },
+            value = myRecipeUiState.ingredient,
+            onValueChange = { onRecipeValueChange(myRecipeUiState.copy(ingredient = it)) },
+            label = { Text(stringResource(id = R.string.recipe_ingredients_label)) },
             modifier = Modifier.fillMaxWidth(),
             enabled = true,
-            singleLine = true
+            maxLines = 30
+        )
+
+        OutlinedTextField(
+            value = myRecipeUiState.instructions,
+            onValueChange = { onRecipeValueChange(myRecipeUiState.copy(instructions = it)) },
+            label = { Text(stringResource(id = R.string.recipe_instructions_label)) },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            maxLines = 30
         )
     }
 }
 
 @Composable
-fun ImagePicker(){
-    var selectedImageUri by remember{ mutableStateOf<Uri?>(null) }
+fun ImagePicker(
+    myRecipeUiState: MyRecipeUiState,
+    onRecipeValueChange: (MyRecipeUiState) -> Unit
+){
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> selectedImageUri = uri }
+        onResult = { uri -> onRecipeValueChange(myRecipeUiState.copy(image = uri ?: "".toUri())) } //TODO: Add placeholder uri here as well
     )
 
     AsyncImage(
-        model = selectedImageUri,
+        model = myRecipeUiState.image,
         contentDescription = null,
         modifier = Modifier.fillMaxWidth(),
         contentScale = ContentScale.Inside,

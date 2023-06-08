@@ -4,6 +4,7 @@
 
     <!-- Add the INTERNET permission here -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
 
     <application
         android:name=".DishpediaApplication"

@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 fun MyRecipeEntryScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
-    viewModel: MyRecipeEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    myRecipeEntryViewModel: MyRecipeEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ){
     val coroutineScope = rememberCoroutineScope()
 
@@ -38,11 +38,11 @@ fun MyRecipeEntryScreen(
         }
     ) {
         MyRecipeEditBody(
-            myRecipeUiState = viewModel.recipeUiState,
-            onRecipeValueChange = viewModel::updateUiState,
+            myRecipeUiState = myRecipeEntryViewModel.recipeUiState,
+            onRecipeValueChange = myRecipeEntryViewModel::updateUiState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.saveRecipe()
+                    myRecipeEntryViewModel.saveRecipe()
                     navigateBack()
                 }
             },

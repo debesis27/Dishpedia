@@ -290,14 +290,14 @@ fun CarouselPreview(){
             else -> R.drawable.soup
         }
         val text = when(index){
-            0 -> R.string.maincourse
+            0 -> R.string.main_course
             1 -> R.string.bread
             2 -> R.string.appetizer
             3 -> R.string.beverage
             4 -> R.string.breakfast
             5 -> R.string.desserts
             6 -> R.string.salad
-            7 -> R.string.sidedish
+            7 -> R.string.side_dish
             8 -> R.string.snacks
             else -> R.string.soup
         }

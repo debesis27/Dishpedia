@@ -14,8 +14,8 @@ data class MyRecipeUiState(
     val summary: String = "",
     val readyInMinutes: String = "",
     val servings: String = "",
-    val ingredient: ArrayList<String> = ArrayList(),
-    val instructions: ArrayList<String> = ArrayList(),
+    val ingredient: String = "",
+    val instructions: String = "",
     val actionEnabled: Boolean = false
 )
 
@@ -52,5 +52,5 @@ fun MyRecipe.toMyRecipeUiState(actionEnabled: Boolean = false): MyRecipeUiState 
  * Extension function to check whether title, ingredients and instructions are empty
  */
 fun MyRecipeUiState.isValid(): Boolean {
-    return title.isNotBlank() && ingredient.isNotEmpty() && instructions.isNotEmpty()
+    return title.isNotBlank() && ingredient.isNotBlank() && instructions.isNotBlank()
 }

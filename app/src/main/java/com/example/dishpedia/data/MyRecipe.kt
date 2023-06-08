@@ -9,7 +9,7 @@ import com.google.gson.reflect.TypeToken
 
 
 @Entity(tableName = "myRecipe")
-@TypeConverters(Converters::class)
+//@TypeConverters(Converters::class)
 data class MyRecipe(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
@@ -18,20 +18,20 @@ data class MyRecipe(
     val summary: String = "",
     val readyInMinutes: Double = 0.0,
     val servings: Double = 0.0,
-    val ingredient: ArrayList<String>,
-    val instructions: ArrayList<String>
+    val ingredient: String,
+    val instructions: String
 )
 
-object Converters {
-    @TypeConverter
-    fun fromString(value: String?): ArrayList<String> {
-        val listType = object : TypeToken<ArrayList<String?>?>() {}.type
-        return Gson().fromJson(value, listType)
-    }
-
-    @TypeConverter
-    fun fromArrayList(list: ArrayList<String?>?): String {
-        val gson = Gson()
-        return gson.toJson(list)
-    }
-}
+//object Converters {
+//    @TypeConverter
+//    fun fromString(value: String?): ArrayList<String> {
+//        val listType = object : TypeToken<ArrayList<String?>?>() {}.type
+//        return Gson().fromJson(value, listType)
+//    }
+//
+//    @TypeConverter
+//    fun fromArrayList(list: ArrayList<String?>?): String {
+//        val gson = Gson()
+//        return gson.toJson(list)
+//    }
+//}
