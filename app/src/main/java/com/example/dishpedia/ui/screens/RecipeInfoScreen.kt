@@ -27,6 +27,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.dishpedia.R
 import com.example.dishpedia.models.Recipe
+import com.example.dishpedia.utils.ErrorScreen
 import com.example.dishpedia.viewmodel.RecipeUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
 import com.example.dishpedia.viewmodel.TabsViewModel
@@ -51,19 +52,22 @@ fun RecipeInfoScreen(
                 }
             }
         }
+
         when(recipeUiState){
             is RecipeUiState.Success -> when(tabIndex.value){
                 0 -> SummaryScreen(recipeUiState.recipe, tabsViewModel)
                 1 -> IngredientsScreen(recipeUiState.recipe, tabsViewModel)
-                else -> InstructionsScreen(recipeUiState.recipe, tabsViewModel)
+                2 -> InstructionsScreen(recipeUiState.recipe, tabsViewModel)
             }
+
+            else -> ErrorScreen()
         }
 
     }
 }
 
 @Composable
-fun SummaryScreen(
+private fun SummaryScreen(
     recipe: Recipe,
     tabsViewModel: TabsViewModel
 ){
@@ -98,7 +102,7 @@ fun SummaryScreen(
         }
         Text(text = recipe.title)
         Text(text = stringResource(id = R.string.cook_time))
-        Text(text = recipe.cookingMinutes.toString())
+        Text(text = recipe.readyInMinutes.toString())
         Text(text = stringResource(id = R.string.servings))
         Text(text = recipe.servings.toString())
         Text(text = stringResource(id = R.string.description))
@@ -107,7 +111,7 @@ fun SummaryScreen(
 }
 
 @Composable
-fun IngredientsScreen(
+private fun IngredientsScreen(
     recipe: Recipe,
     tabsViewModel: TabsViewModel
 ){
@@ -132,7 +136,7 @@ fun IngredientsScreen(
 }
 
 @Composable
-fun InstructionsScreen(
+private fun InstructionsScreen(
     recipe: Recipe,
     tabsViewModel: TabsViewModel
 ){

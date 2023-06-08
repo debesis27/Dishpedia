@@ -1,23 +1,24 @@
 package com.example.dishpedia.ui.screens
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
@@ -27,14 +28,11 @@ import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -42,16 +40,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import com.example.dishpedia.DishpediaScreen
 import com.example.dishpedia.R
 import com.example.dishpedia.models.CategoryListItemsProvider
-import com.example.dishpedia.models.NavigationDrawerItems
-import com.example.dishpedia.models.Recipe
-import com.example.dishpedia.models.Recipes
-import com.example.dishpedia.ui.theme.Purple500
+import com.example.dishpedia.models.NavigationDrawerItemsProvider
+import com.example.dishpedia.models.NavigationItemsProvider
+import com.example.dishpedia.utils.ErrorScreen
+import com.example.dishpedia.utils.NavigationDrawer
+import com.example.dishpedia.utils.RecipeList
 import com.example.dishpedia.viewmodel.CategoryRecipesUiState
 import com.example.dishpedia.viewmodel.RecipesUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
@@ -65,144 +60,146 @@ fun HomeScreen(
 ){
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
-
-    val navItems = listOf(
-        NavigationDrawerItems(
-            name = "Home",
-            route = "Home",
-        ),
-        NavigationDrawerItems(
-            name = "My Recipes",
-            route = "MyRecipes",
-        ),
-        //TODO: Add authorization, then accounts
-//        NavigationDrawerItems(
-//            name = "Account",
-//            route = "Account",
-//        )
-    )
+    val navItems = NavigationDrawerItemsProvider.navItems
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { HomeScreenAppBar(coroutineScope = coroutineScope, scaffoldState = scaffoldState, navController = navController) },
-        drawerContent = { HomeScreenDrawer(navItems, navController, coroutineScope, scaffoldState) },
-        drawerGesturesEnabled = true,
-        content = {
-            Column(modifier = Modifier.padding(it)) {
-                Row(
+        topBar = {
+            HomeScreenAppBar(
+                coroutineScope = coroutineScope,
+                scaffoldState = scaffoldState,
+                navController = navController
+            )
+        },
+        drawerContent = { NavigationDrawer(navItems, navController, coroutineScope, scaffoldState) },
+        drawerGesturesEnabled = true
+    ) {
+        Column(modifier = Modifier.padding(it)) {
+            Row(
+                modifier = Modifier
+                    .padding(top = 14.dp, start = 3.dp, end = 3.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Divider(
+                    color = Color.LightGray,
                     modifier = Modifier
-                        .padding(top = 14.dp,start = 3.dp, end = 3.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Divider(
-                        color = Color.LightGray,
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(1.dp)
-                            .padding(end = 4.dp)
-                            .clip(CircleShape)
-                    )
-                    Text(
-                        text = stringResource(id = R.string.categories),
-                        color = Color.DarkGray
-                    )
-                    Divider(
-                        color = Color.LightGray,
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(1.dp)
-                            .padding(start = 4.dp)
-                            .clip(CircleShape)
-                    )
-                }
-                //TODO: Make list and stuffs, then check whether carousel works
-                Carousel(
-                    count = 10,
-                    parentModifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    contentWidth = 250.dp,
-                    contentHeight = 200.dp
-                ) { modifier, index ->
-                    val category = when(index){
-                        0 -> CategoryListItemsProvider.mainCourse
-                        1 -> CategoryListItemsProvider.bread
-                        2 -> CategoryListItemsProvider.soup
-                        3 -> CategoryListItemsProvider.dessert
-                        4 -> CategoryListItemsProvider.beverage
-                        5 -> CategoryListItemsProvider.appetizer
-                        6 -> CategoryListItemsProvider.breakfast
-                        7 -> CategoryListItemsProvider.salad
-                        8 -> CategoryListItemsProvider.sideDish
-                        else -> CategoryListItemsProvider.snacks
-                    }
-
-                    Box(
-                        modifier = modifier
-                            .background(Color.White)
-                            .clickable {
-                                recipesViewModel.getCategoryRecipe(category)
-//                                navController.navigate(DishpediaScreen.RecipeInfo.name)
-                            },
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        Column {
-                            Image(
-                                painter = painterResource(id = category.image),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .height(150.dp)
-                                    .width(150.dp)
-                            )
-                            Text(
-                                text = category.text,
-                                modifier = Modifier.width(150.dp),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                }
-                Row(
+                        .weight(1f)
+                        .height(1.dp)
+                        .padding(end = 4.dp)
+                        .clip(CircleShape)
+                )
+                Text(
+                    text = stringResource(id = R.string.categories),
+                    color = Color.DarkGray
+                )
+                Divider(
+                    color = Color.LightGray,
                     modifier = Modifier
-                        .padding(top = 14.dp,start = 3.dp, end = 3.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Divider(
-                        color = Color.LightGray,
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(1.dp)
-                            .padding(end = 4.dp)
-                            .clip(CircleShape)
-                    )
-                    Text(
-                        text = when(recipesViewModel.categoryRecipeUiState){
-                                   is CategoryRecipesUiState.Loading -> stringResource(id = R.string.featured)
-                                   is CategoryRecipesUiState.Success -> (recipesViewModel.categoryRecipeUiState as CategoryRecipesUiState.Success).category.text
-                                   is CategoryRecipesUiState.Error -> stringResource(id = R.string.error)
-                               },
-                        color = Color.DarkGray
-                    )
-                    Divider(
-                        color = Color.LightGray,
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(1.dp)
-                            .padding(start = 4.dp)
-                            .clip(CircleShape)
-                    )
-                }
-
-                when(val categoryUiState = recipesViewModel.categoryRecipeUiState){
-                    is CategoryRecipesUiState.Loading -> when(val recipesUiState = recipesViewModel.randomRecipesUiState){
-                        is RecipesUiState.Success -> RecipeList(recipesUiState.recipes, recipesViewModel, navController)
-                    }
-                    is CategoryRecipesUiState.Success -> RecipeList(categoryUiState.recipes, recipesViewModel, navController)
-                }
-
+                        .weight(1f)
+                        .height(1.dp)
+                        .padding(start = 4.dp)
+                        .clip(CircleShape)
+                )
             }
+            //TODO: Make list and stuffs, then check whether carousel works
+            Carousel(
+                count = 10,
+                parentModifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentWidth = 250.dp,
+                contentHeight = 200.dp
+            ) { modifier, index ->
+                val category = when (index) {
+                    0 -> CategoryListItemsProvider.mainCourse
+                    1 -> CategoryListItemsProvider.bread
+                    2 -> CategoryListItemsProvider.soup
+                    3 -> CategoryListItemsProvider.dessert
+                    4 -> CategoryListItemsProvider.beverage
+                    5 -> CategoryListItemsProvider.appetizer
+                    6 -> CategoryListItemsProvider.breakfast
+                    7 -> CategoryListItemsProvider.salad
+                    8 -> CategoryListItemsProvider.sideDish
+                    else -> CategoryListItemsProvider.snacks
+                }
+
+                Box(
+                    modifier = modifier
+                        .background(Color.White)
+                        .clickable {
+                            recipesViewModel.getCategoryRecipe(category)
+                        },
+                    contentAlignment = Alignment.TopCenter
+                ) {
+                    Column {
+                        Image(
+                            painter = painterResource(id = category.image),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .height(150.dp)
+                                .width(150.dp)
+                        )
+                        Text(
+                            text = category.text,
+                            modifier = Modifier.width(150.dp),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .padding(top = 14.dp, start = 3.dp, end = 3.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Divider(
+                    color = Color.LightGray,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(1.dp)
+                        .padding(end = 4.dp)
+                        .clip(CircleShape)
+                )
+                Text(
+                    text = when (recipesViewModel.categoryRecipeUiState) {
+                        is CategoryRecipesUiState.Loading -> stringResource(id = R.string.featured)
+                        is CategoryRecipesUiState.Success -> (recipesViewModel.categoryRecipeUiState as CategoryRecipesUiState.Success).category.text
+                        is CategoryRecipesUiState.Error -> stringResource(id = R.string.error)
+                    },
+                    color = Color.DarkGray
+                )
+                Divider(
+                    color = Color.LightGray,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(1.dp)
+                        .padding(start = 4.dp)
+                        .clip(CircleShape)
+                )
+            }
+
+            when (val categoryUiState = recipesViewModel.categoryRecipeUiState) {
+                is CategoryRecipesUiState.Loading -> when (val recipesUiState =
+                    recipesViewModel.randomRecipesUiState) {
+                    is RecipesUiState.Success -> RecipeList(
+                        recipesUiState.recipes,
+                        recipesViewModel,
+                        navController
+                    )
+
+                    else -> ErrorScreen()
+                }
+
+                is CategoryRecipesUiState.Success -> RecipeList(
+                    categoryUiState.recipes,
+                    recipesViewModel,
+                    navController
+                )
+                is CategoryRecipesUiState.Error -> ErrorScreen()
+            }
+
         }
-    )
+    }
 }
 
 @Composable
@@ -238,58 +235,6 @@ fun Carousel(
 }
 
 @Composable
-private fun RecipeCard(
-    recipe: Recipe,
-    recipesViewModel: RecipesViewModel,
-    navController: NavController,
-    modifier: Modifier = Modifier
-){
-    Card(
-        modifier = modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .clickable {
-                recipesViewModel.getRecipeById(recipe.id)
-                navController.navigate(DishpediaScreen.RecipeInfo.name)
-            }
-        ,
-        elevation = 4.dp
-    ) {
-        Column {
-            AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(recipe.image)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = recipe.title,
-                modifier = Modifier.fillMaxWidth(),
-                error = painterResource(id = R.drawable.ic_connection_error),
-                placeholder = painterResource(id = R.drawable.loading_img),
-                contentScale = ContentScale.FillWidth
-            )
-            Text(
-                text = recipe.title,
-                modifier = Modifier.padding(16.dp),
-                style = MaterialTheme.typography.h6
-            )
-        }
-    }
-}
-
-@Composable
-private fun RecipeList(
-    recipes: Recipes,
-    recipesViewModel: RecipesViewModel,
-    navController: NavController
-){
-    LazyColumn{
-        items(recipes.recipes){recipe ->
-            RecipeCard(recipe, recipesViewModel, navController)
-        }
-    }
-}
-
-@Composable
 fun HomeScreenAppBar(
     modifier: Modifier = Modifier,
     coroutineScope: CoroutineScope,
@@ -310,7 +255,7 @@ fun HomeScreenAppBar(
                 }
         },
         actions = {
-            IconButton(onClick = { navController.navigate(DishpediaScreen.Search.name) }) {
+            IconButton(onClick = { navController.navigate(NavigationItemsProvider.Search.route) }) {
                 Icon(
                     imageVector = Icons.Rounded.Search,
                     contentDescription = stringResource(id = R.string.search_button),
@@ -319,66 +264,6 @@ fun HomeScreenAppBar(
             }
         }
     )
-}
-
-@Composable
-fun HomeScreenDrawer(
-    navItems: List<NavigationDrawerItems>,
-    navController: NavController,
-    coroutineScope: CoroutineScope,
-    scaffoldState: ScaffoldState
-){
-    val backStackEntry by navController.currentBackStackEntryAsState()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 8.dp, top = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .size(126.dp)
-                .clip(CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.guest_icon),
-                contentDescription = null,
-                modifier = Modifier.matchParentSize()
-            )
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        navItems.forEach{ item ->
-            val selected = item.route == backStackEntry?.destination?.route
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp)
-                    .clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                        }
-                        navController.navigate(item.route)
-                    },
-                backgroundColor = if (selected) Purple500 else Color.White,
-                elevation = 0.dp,
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Text(
-                        text = item.name,
-                        modifier = Modifier.padding(start = 24.dp)
-                    )
-                }
-            }
-        }
-    }
 }
 
 @Preview(showBackground = true)
@@ -405,14 +290,14 @@ fun CarouselPreview(){
             else -> R.drawable.soup
         }
         val text = when(index){
-            0 -> R.string.maincourse
+            0 -> R.string.main_course
             1 -> R.string.bread
             2 -> R.string.appetizer
             3 -> R.string.beverage
             4 -> R.string.breakfast
             5 -> R.string.desserts
             6 -> R.string.salad
-            7 -> R.string.sidedish
+            7 -> R.string.side_dish
             8 -> R.string.snacks
             else -> R.string.soup
         }

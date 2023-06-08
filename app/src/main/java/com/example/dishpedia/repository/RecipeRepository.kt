@@ -1,8 +1,6 @@
 package com.example.dishpedia.repository
 
-import com.example.dishpedia.AppContainer
 import com.example.dishpedia.api.RecipesApiService
-import com.example.dishpedia.models.*
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
 

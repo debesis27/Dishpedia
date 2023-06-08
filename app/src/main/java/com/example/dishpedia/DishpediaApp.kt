@@ -1,51 +1,86 @@
 package com.example.dishpedia
 
+import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.dishpedia.models.NavigationItemsProvider
 import com.example.dishpedia.ui.screens.HomeScreen
+import com.example.dishpedia.ui.screens.MyRecipeDetailsScreen
+import com.example.dishpedia.ui.screens.MyRecipeEditScreen
+import com.example.dishpedia.ui.screens.MyRecipeEntryScreen
+import com.example.dishpedia.ui.screens.MyRecipeScreen
 import com.example.dishpedia.ui.screens.RecipeInfoScreen
 import com.example.dishpedia.ui.screens.SearchScreen
+import com.example.dishpedia.viewmodel.AppViewModelProvider
 import com.example.dishpedia.viewmodel.RecipesViewModel
-
-enum class DishpediaScreen(){
-    Home,
-    MyRecipes,
-    Search,
-    RecipeInfo
-}
 
 @Composable
 fun DishpediaApp(
-    recipesViewModel: RecipesViewModel,
+    context: Context,
     modifier: Modifier = Modifier
 ){
     val navController = rememberNavController()
+    val recipesViewModel: RecipesViewModel = viewModel(factory = AppViewModelProvider.Factory)
 
-    // TODO: add NavHost
     NavHost(
         navController = navController,
-        startDestination = DishpediaScreen.Home.name,
+        startDestination = NavigationItemsProvider.Home.route,
     ){
-        composable(route = DishpediaScreen.Home.name){
+        composable(route = NavigationItemsProvider.Home.route){
             HomeScreen(recipesViewModel, navController)
         }
 
-        composable(route = DishpediaScreen.Search.name){
+        composable(route = NavigationItemsProvider.Search.route){
             SearchScreen(recipesViewModel, navController)
         }
 
-        composable(route = DishpediaScreen.MyRecipes.name){
-            //TODO: Add My Recipes Screen
-        }
-
-        composable(route = DishpediaScreen.RecipeInfo.name){
+        composable(route = NavigationItemsProvider.recipeInfo.route){
             RecipeInfoScreen(recipesViewModel)
         }
-    }
 
+        composable(route = NavigationItemsProvider.MyRecipes.route){
+            MyRecipeScreen(
+                navController = navController
+            )
+        }
+
+        composable(route = NavigationItemsProvider.MyRecipeEntry.route){
+            MyRecipeEntryScreen(
+                context = context,
+                navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() },
+            )
+        }
+
+        composable(
+            route = NavigationItemsProvider.MyRecipeEdit.routeWithArgs,
+            arguments = listOf(navArgument(NavigationItemsProvider.MyRecipeEdit.recipeIdArg){
+                type = NavType.IntType
+            })
+        ){
+            MyRecipeEditScreen(
+                context = context,
+                navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() }
+            )
+        }
+
+        composable(
+            route = NavigationItemsProvider.MyRecipeDetails.routeWithArgs,
+            arguments = listOf(navArgument(NavigationItemsProvider.MyRecipeDetails.recipeIdArg){
+                type = NavType.IntType
+            })
+        ){
+            MyRecipeDetailsScreen(
+                navigateToEditMyRecipe = { navController.navigate("${NavigationItemsProvider.MyRecipeEdit.route}/$it") },
+                onNavigateUp = { navController.navigateUp() },
+            )
+        }
+    }
 }

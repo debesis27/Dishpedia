@@ -1,22 +1,35 @@
 <resources>
     <string name="app_name">Dishpedia</string>
     <string name="back_button">Back</string>
+    <string name="save_button">Save</string>
+    <string name="delete_button">Delete</string>
     <string name="search_button">Search</string>
     <string name="menu_button">Menu</string>
     <string name="categories">Categories</string>
     <string name="featured">Featured</string>
-    <string name="maincourse">Main Course</string>
+    <string name="main_course">Main Course</string>
     <string name="appetizer">Appetizers</string>
     <string name="bread">Breads</string>
     <string name="beverage">Beverages</string>
     <string name="breakfast">Breakfast</string>
     <string name="desserts">Desserts</string>
     <string name="salad">Salad</string>
-    <string name="sidedish">Side Dish</string>
+    <string name="side_dish">Side Dish</string>
     <string name="snacks">Snacks</string>
     <string name="soup">Soup</string>
     <string name="cook_time">Cook Time</string>
     <string name="servings">Servings</string>
     <string name="description">Description</string>
     <string name="error">Error</string>
+    <string name="my_recipes">My Recipes</string>
+    <string name="recipe_title_label">Recipe Name *</string>
+    <string name="recipe_summary_label">Recipe Summary</string>
+    <string name="recipe_ready_in_minutes_label">Cook Time (in minutes)</string>
+    <string name="recipe_servings_label">Servings</string>
+    <string name="recipe_ingredients_label">Ingredients (Enter each ingredient in a new line) *</string>
+    <string name="recipe_instructions_label">Instructions (Enter each instruction in a new line) *</string>
+    <string name="attention">Attention:</string>
+    <string name="delete_question">Are you sure you want to delete?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
 </resources>

@@ -12,7 +12,6 @@ data class Recipes(
 @Entity
 data class Recipe(
     @SerializedName("analyzedInstructions") val analyzedInstructions: List<AnalyzedInstruction>,
-    @SerializedName("cookingMinutes") val cookingMinutes: Int = 0,
     @SerializedName("dishTypes") val dishTypes: List<String> = listOf(""),
     @SerializedName("extendedIngredients") val extendedIngredients: List<ExtendedIngredient>,
     @SerializedName("id") @PrimaryKey val id: Int = 0,
@@ -38,7 +37,6 @@ data class ExtendedIngredient(
     val measures: Measures,
     val meta: List<String> = listOf(""),
     val name: String = "",
-//    val nameClean: String = "",
     val original: String = "",
     val originalName: String = "",
     val unit: String = ""

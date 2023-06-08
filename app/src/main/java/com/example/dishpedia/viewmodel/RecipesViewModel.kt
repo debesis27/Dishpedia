@@ -46,7 +46,7 @@ sealed interface CategoryRecipesUiState{
 
 class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
     /**
-     * The mutable State that stores the status of the most recent request
+     * The mutable States that stores the status of the most recent request
      */
     var randomRecipesUiState: RecipesUiState by mutableStateOf(RecipesUiState.Loading)
     var searchedRecipesUiState: RecipesUiState by mutableStateOf(RecipesUiState.Loading)
@@ -57,7 +57,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
      * Call getRandomRecipes() on init so we can display status immediately.
      */
     init {
-        getRandomRecipes(10)
+        getRandomRecipes(0) //TODO: Change it later to 20 or so
     }
 
     private fun getRandomRecipes(number: Int){
@@ -134,15 +134,5 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
         queries[QUERY_FILL_INGREDIENTS] = "true"
 
         return queries
-    }
-
-    companion object{
-        val Factory : ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as DishpediaApplication)
-                val recipeRepository = application.container.recipeRepository
-                RecipesViewModel(recipeRepository)
-            }
-        }
     }
 }
