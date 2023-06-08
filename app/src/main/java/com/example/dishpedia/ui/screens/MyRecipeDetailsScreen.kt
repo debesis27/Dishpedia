@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -15,14 +16,20 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -38,6 +45,7 @@ import com.example.dishpedia.viewmodel.AppViewModelProvider
 import com.example.dishpedia.viewmodel.MyRecipeDetailViewModel
 import com.example.dishpedia.viewmodel.TabsViewModel
 import com.example.dishpedia.viewmodel.uiState.MyRecipeUiState
+import kotlinx.coroutines.launch
 
 @Composable
 fun MyRecipeDetailsScreen(
@@ -48,13 +56,18 @@ fun MyRecipeDetailsScreen(
 ){
     val tabIndex = tabsViewModel.tabIndex.observeAsState()
     val myRecipeUiState by myRecipeDetailViewModel.uiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+    var deleteConfirmation by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             MyRecipeDetailsScreenAppBar(
                 myRecipeUiState = myRecipeUiState,
                 navigateUp = onNavigateUp,
-                navigateToEditMyRecipe = navigateToEditMyRecipe
+                navigateToEditMyRecipe = navigateToEditMyRecipe,
+                onDelete = {
+                    deleteConfirmation = true
+                }
             )
         }
     ) {innerPadding ->
@@ -79,6 +92,17 @@ fun MyRecipeDetailsScreen(
                 1 -> IngredientsScreen(myRecipeUiState, tabsViewModel)
                 2 -> InstructionsScreen(myRecipeUiState, tabsViewModel)
             }
+            if(deleteConfirmation){
+                DeleteConfirmationDialog(
+                    onDeleteConfirm = {
+                        deleteConfirmation = false
+                        coroutineScope.launch {
+                            myRecipeDetailViewModel.deleteMyRecipe()
+                            onNavigateUp()
+                        }
+                    },
+                    onDeleteCancel = { deleteConfirmation = false })
+            }
         }
     }
 }
@@ -88,6 +112,7 @@ fun MyRecipeDetailsScreenAppBar(
     myRecipeUiState: MyRecipeUiState,
     navigateUp: () -> Unit,
     navigateToEditMyRecipe: (Int) -> Unit,
+    onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ){
     TopAppBar(
@@ -108,9 +133,40 @@ fun MyRecipeDetailsScreenAppBar(
                     contentDescription = "Edit Recipe"
                 )
             }
+            IconButton(onClick = onDelete) {
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = stringResource(id = R.string.delete_button)
+                )
+            }
         }
     )
 }
+
+@Composable
+private fun DeleteConfirmationDialog(
+    onDeleteConfirm: () -> Unit,
+    onDeleteCancel: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AlertDialog(
+        onDismissRequest = { /* Do nothing */ },
+        title = { Text(stringResource(R.string.attention)) },
+        text = { Text(stringResource(R.string.delete_question)) },
+        modifier = modifier.padding(16.dp),
+        dismissButton = {
+            TextButton(onClick = onDeleteCancel) {
+                Text(text = stringResource(R.string.no))
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDeleteConfirm) {
+                Text(text = stringResource(R.string.yes))
+            }
+        }
+    )
+}
+
 
 @Composable
 private fun SummaryScreen(

@@ -2,6 +2,7 @@
     <string name="app_name">Dishpedia</string>
     <string name="back_button">Back</string>
     <string name="save_button">Save</string>
+    <string name="delete_button">Delete</string>
     <string name="search_button">Search</string>
     <string name="menu_button">Menu</string>
     <string name="categories">Categories</string>
@@ -27,4 +28,8 @@
     <string name="recipe_servings_label">Servings</string>
     <string name="recipe_ingredients_label">Ingredients (Enter each ingredient in a new line) *</string>
     <string name="recipe_instructions_label">Instructions (Enter each instruction in a new line) *</string>
+    <string name="attention">Attention:</string>
+    <string name="delete_question">Are you sure you want to delete?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
 </resources>
