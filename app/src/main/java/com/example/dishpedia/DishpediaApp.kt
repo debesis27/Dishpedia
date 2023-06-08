@@ -1,5 +1,6 @@
 package com.example.dishpedia
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -21,6 +22,7 @@ import com.example.dishpedia.viewmodel.RecipesViewModel
 
 @Composable
 fun DishpediaApp(
+    context: Context,
     modifier: Modifier = Modifier
 ){
     val navController = rememberNavController()
@@ -50,6 +52,7 @@ fun DishpediaApp(
 
         composable(route = NavigationItemsProvider.MyRecipeEntry.route){
             MyRecipeEntryScreen(
+                context = context,
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() },
             )
@@ -62,6 +65,7 @@ fun DishpediaApp(
             })
         ){
             MyRecipeEditScreen(
+                context = context,
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
             )

@@ -10,7 +10,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             DishpediaTheme {
-                DishpediaApp()
+                DishpediaApp(context = this@MainActivity)
             }
         }
     }

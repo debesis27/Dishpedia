@@ -1,5 +1,6 @@
 package com.example.dishpedia.ui.screens
 
+import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MyRecipeEditScreen(
+    context: Context,
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     myRecipeEditViewModel: MyRecipeEditViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -39,6 +41,7 @@ fun MyRecipeEditScreen(
         }
     ) { innerPadding ->
         MyRecipeEditBody(
+            context = context,
             myRecipeUiState = myRecipeUiState,
             onRecipeValueChange = myRecipeEditViewModel::updateUiState,
             onSaveClick = {

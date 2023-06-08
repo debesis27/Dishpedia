@@ -1,6 +1,11 @@
 package com.example.dishpedia.utils
 
+import android.content.ContentResolver
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -62,6 +67,11 @@ import com.example.dishpedia.viewmodel.RecipesViewModel
 import com.example.dishpedia.viewmodel.uiState.MyRecipeUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import okio.IOException
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.util.Locale
 
 /**
  * Composable that shows a list of recipes using LazyColumn
@@ -189,6 +199,7 @@ fun NavigationDrawer(
  */
 @Composable
 fun MyRecipeEditBody(
+    context: Context,
     myRecipeUiState: MyRecipeUiState,
     onRecipeValueChange: (MyRecipeUiState) -> Unit,
     onSaveClick: () -> Unit,
@@ -201,6 +212,7 @@ fun MyRecipeEditBody(
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
         MyRecipeInputForm(
+            context = context,
             myRecipeUiState = myRecipeUiState,
             onRecipeValueChange = onRecipeValueChange
         )
@@ -219,6 +231,7 @@ fun MyRecipeEditBody(
  */
 @Composable
 fun MyRecipeInputForm(
+    context: Context,
     myRecipeUiState: MyRecipeUiState,
     onRecipeValueChange: (MyRecipeUiState) -> Unit = {},
     modifier: Modifier = Modifier
@@ -234,6 +247,7 @@ fun MyRecipeInputForm(
                 .height(100.dp)
         ) {
             ImagePicker(
+                context = context,
                 myRecipeUiState = myRecipeUiState,
                 onRecipeValueChange = onRecipeValueChange
             )
@@ -301,12 +315,18 @@ fun MyRecipeInputForm(
 
 @Composable
 fun ImagePicker(
+    context: Context,
     myRecipeUiState: MyRecipeUiState,
     onRecipeValueChange: (MyRecipeUiState) -> Unit
 ){
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> onRecipeValueChange(myRecipeUiState.copy(image = uri ?: "".toUri())) } //TODO: Add placeholder uri here as well
+        onResult = { uri ->
+            val copiedImagePath = copyImageToInternalStorage(context, uri ?: "".toUri())
+            if (copiedImagePath != null) {
+                onRecipeValueChange(myRecipeUiState.copy(image = copiedImagePath.toUri()))
+            }
+        } //TODO: Add placeholder uri here as well
     )
 
     AsyncImage(
@@ -324,6 +344,62 @@ fun ImagePicker(
     }) {
         Text(text = "Pick photo")
     }
+}
+
+fun copyImageToInternalStorage(context: Context, imageUri: Uri): String? {
+    // Generate a unique file name
+    val fileName = "image_${System.currentTimeMillis()}"
+
+    // Get the file extension from the URI
+    val fileExtension = getFileExtension(context.contentResolver, imageUri)
+
+    // Create a destination file in the internal storage
+    val internalStorageDir = context.filesDir
+    val destinationFile = File(internalStorageDir, "$fileName.$fileExtension")
+
+    // Open input stream from the image URI
+    val contentResolver: ContentResolver = context.contentResolver
+    var inputStream: InputStream? = null
+    try {
+        inputStream = contentResolver.openInputStream(imageUri)
+
+        // Decode the input stream into a Bitmap
+        val bitmap: Bitmap = BitmapFactory.decodeStream(inputStream)
+
+        // Create a file output stream
+        val fileOutputStream = FileOutputStream(destinationFile)
+
+        // Determine the image format based on file extension
+        val compressFormat = when (fileExtension.lowercase(Locale.ROOT)) {
+            "jpg", "jpeg" -> Bitmap.CompressFormat.JPEG
+            "png" -> Bitmap.CompressFormat.PNG
+            else -> Bitmap.CompressFormat.JPEG // Default to JPEG format
+        }
+
+        // Compress the bitmap to the file output stream with desired format and quality
+        bitmap.compress(compressFormat, 100, fileOutputStream)
+
+        // Close the file output stream
+        fileOutputStream.close()
+
+        // Return the absolute path of the saved image file
+        return destinationFile.absolutePath
+    } catch (e: IOException) {
+        e.printStackTrace()
+    } finally {
+        // Close the input stream
+        inputStream?.close()
+    }
+
+    return null
+}
+
+// Helper function to get file extension from the URI
+private fun getFileExtension(contentResolver: ContentResolver, uri: Uri): String {
+    val mimeType = contentResolver.getType(uri)
+    return MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
+        ?: MimeTypeMap.getFileExtensionFromUrl(uri.toString())
+        ?: ""
 }
 
 //@Composable
