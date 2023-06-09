@@ -13,9 +13,11 @@ private val DarkColorPalette = darkColors(
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    background = background_color,
+    surface = card_color,
+    primary = primary_text_color,
+    secondary = secondary_text_color,
+    onSecondary = numeric_text_color,
 
     /* Other default colors to override
     background = Color.White,
