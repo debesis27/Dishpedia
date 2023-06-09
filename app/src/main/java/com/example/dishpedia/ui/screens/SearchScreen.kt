@@ -40,7 +40,8 @@ fun SearchScreen(
 ){
     val recipeUiState = recipesViewModel.searchedRecipesUiState
     Surface(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colors.background
     ) {
         Column {
             SearchBar(recipesViewModel)
@@ -89,14 +90,13 @@ fun SearchBar(recipesViewModel: RecipesViewModel){
         ),
         keyboardActions = KeyboardActions(
             onSearch = {
-                //TODO: Add search
                 recipesViewModel.getSearchedRecipes(query)
             }
         ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(20.dp)
-            .background(color = Color.LightGray, shape = RoundedCornerShape(50.dp)),
+            .background(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(50.dp)),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.Transparent,
             unfocusedBorderColor = Color.Transparent

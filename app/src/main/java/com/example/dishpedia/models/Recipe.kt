@@ -20,7 +20,8 @@ data class Recipe(
     @SerializedName("readyInMinutes") val readyInMinutes: Int = 0,
     @SerializedName("servings") val servings: Int = 0,
     @SerializedName("summary") val summary: String = "",
-    @SerializedName("title") val title: String = ""
+    @SerializedName("title") val title: String = "",
+    @SerializedName("vegetarian") val vegetarian: Boolean = false
 )
 
 data class AnalyzedInstruction(

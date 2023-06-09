@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
@@ -44,6 +45,7 @@ import com.example.dishpedia.R
 import com.example.dishpedia.models.CategoryListItemsProvider
 import com.example.dishpedia.models.NavigationDrawerItemsProvider
 import com.example.dishpedia.models.NavigationItemsProvider
+import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.utils.ErrorScreen
 import com.example.dishpedia.utils.NavigationDrawer
 import com.example.dishpedia.utils.RecipeList
@@ -77,7 +79,7 @@ fun HomeScreen(
         Column(modifier = Modifier.padding(it)) {
             Row(
                 modifier = Modifier
-                    .padding(top = 14.dp, start = 3.dp, end = 3.dp),
+                    .padding(top = 14.dp, start = 10.dp, end = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Divider(
@@ -85,11 +87,12 @@ fun HomeScreen(
                     modifier = Modifier
                         .weight(1f)
                         .height(1.dp)
-                        .padding(end = 4.dp)
+                        .padding(end = 10.dp)
                         .clip(CircleShape)
                 )
                 Text(
                     text = stringResource(id = R.string.categories),
+                    style = MaterialTheme.typography.h3,
                     color = Color.DarkGray
                 )
                 Divider(
@@ -97,16 +100,16 @@ fun HomeScreen(
                     modifier = Modifier
                         .weight(1f)
                         .height(1.dp)
-                        .padding(start = 4.dp)
+                        .padding(start = 10.dp)
                         .clip(CircleShape)
                 )
             }
-            //TODO: Make list and stuffs, then check whether carousel works
             Carousel(
                 count = 10,
-                parentModifier = Modifier
+                modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp),
+                    .height(200.dp)
+                    .background(MaterialTheme.colors.background),
                 contentWidth = 250.dp,
                 contentHeight = 200.dp
             ) { modifier, index ->
@@ -125,7 +128,6 @@ fun HomeScreen(
 
                 Box(
                     modifier = modifier
-                        .background(Color.White)
                         .clickable {
                             recipesViewModel.getCategoryRecipe(category)
                         },
@@ -141,6 +143,7 @@ fun HomeScreen(
                         )
                         Text(
                             text = category.text,
+                            style = MaterialTheme.typography.h3,
                             modifier = Modifier.width(150.dp),
                             textAlign = TextAlign.Center
                         )
@@ -149,7 +152,7 @@ fun HomeScreen(
             }
             Row(
                 modifier = Modifier
-                    .padding(top = 14.dp, start = 3.dp, end = 3.dp),
+                    .padding(top = 14.dp, start = 10.dp, end = 10.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Divider(
@@ -157,7 +160,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .weight(1f)
                         .height(1.dp)
-                        .padding(end = 4.dp)
+                        .padding(end = 10.dp)
                         .clip(CircleShape)
                 )
                 Text(
@@ -166,6 +169,7 @@ fun HomeScreen(
                         is CategoryRecipesUiState.Success -> (recipesViewModel.categoryRecipeUiState as CategoryRecipesUiState.Success).category.text
                         is CategoryRecipesUiState.Error -> stringResource(id = R.string.error)
                     },
+                    style = MaterialTheme.typography.h3,
                     color = Color.DarkGray
                 )
                 Divider(
@@ -173,7 +177,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .weight(1f)
                         .height(1.dp)
-                        .padding(start = 4.dp)
+                        .padding(start = 10.dp)
                         .clip(CircleShape)
                 )
             }
@@ -186,8 +190,8 @@ fun HomeScreen(
                         recipesViewModel,
                         navController
                     )
-
-                    else -> ErrorScreen()
+                    is RecipesUiState.Loading -> { /* Do Nothing */ }
+                    is RecipesUiState.Error -> ErrorScreen()
                 }
 
                 is CategoryRecipesUiState.Success -> RecipeList(
@@ -205,15 +209,13 @@ fun HomeScreen(
 @Composable
 fun Carousel(
     count: Int,
-    parentModifier: Modifier = Modifier
-        .fillMaxWidth()
-        .height(540.dp),
+    modifier: Modifier = Modifier,
     contentWidth: Dp,
     contentHeight: Dp,
     content: @Composable (modifier: Modifier, index: Int) -> Unit
 ) {
 
-    BoxWithConstraints(modifier = parentModifier) {
+    BoxWithConstraints(modifier = modifier) {
         LazyRow(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(top = 10.dp),
@@ -242,8 +244,12 @@ fun HomeScreenAppBar(
     navController: NavController
 ){
     TopAppBar(
-        title = { Text(stringResource(id = R.string.app_name)) },
+        title = { Text(
+            text = stringResource(id = R.string.app_name),
+            style = MaterialTheme.typography.h1
+        ) },
         modifier = modifier,
+        backgroundColor = MaterialTheme.colors.surface,
         navigationIcon = {
                 IconButton(
                     onClick = { coroutineScope.launch { scaffoldState.drawerState.open() } }
@@ -259,67 +265,9 @@ fun HomeScreenAppBar(
                 Icon(
                     imageVector = Icons.Rounded.Search,
                     contentDescription = stringResource(id = R.string.search_button),
-                    tint = Color.White
+                    tint = Color.Black
                 )
             }
         }
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CarouselPreview(){
-    Carousel(
-        count = 10,
-        parentModifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp),
-        contentWidth = 250.dp,
-        contentHeight = 200.dp
-    ) { modifier, index ->
-        val image = when(index){
-            0 -> R.drawable.maincourse
-            1 -> R.drawable.bread
-            2 -> R.drawable.appetizer
-            3 -> R.drawable.beverage
-            4 -> R.drawable.breakfast
-            5 -> R.drawable.desserts
-            6 -> R.drawable.salad
-            7 -> R.drawable.sidedish
-            8 -> R.drawable.snacks
-            else -> R.drawable.soup
-        }
-        val text = when(index){
-            0 -> R.string.main_course
-            1 -> R.string.bread
-            2 -> R.string.appetizer
-            3 -> R.string.beverage
-            4 -> R.string.breakfast
-            5 -> R.string.desserts
-            6 -> R.string.salad
-            7 -> R.string.side_dish
-            8 -> R.string.snacks
-            else -> R.string.soup
-        }
-        Box(
-            modifier = modifier
-                .background(Color.White),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            Column {
-                Image(
-                    painter = painterResource(id = image),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(150.dp)
-                        .width(150.dp)
-                )
-                Text(
-                    text = stringResource(id = text),
-                    modifier = Modifier.width(150.dp),
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-    }
 }

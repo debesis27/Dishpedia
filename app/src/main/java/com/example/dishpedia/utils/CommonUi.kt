@@ -82,7 +82,9 @@ fun RecipeList(
     recipesViewModel: RecipesViewModel,
     navController: NavController
 ){
-    LazyColumn{
+    LazyColumn(
+        modifier = Modifier.padding(top = 10.dp, start = 14.dp, end = 14.dp, bottom = 10.dp)
+    ){
         items(recipes.recipes){recipe ->
             RecipeCard(recipe, recipesViewModel, navController)
         }
@@ -99,9 +101,15 @@ private fun RecipeCard(
     navController: NavController,
     modifier: Modifier = Modifier
 ){
+    val diet = when(recipe.vegetarian){
+        true -> "veg"
+        false -> "non-veg"
+    }
+
     Card(
         modifier = modifier
-            .padding(8.dp)
+            .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 40.dp)
+            .height(300.dp)
             .fillMaxWidth()
             .clickable {
                 recipesViewModel.getRecipeById(recipe.id)
@@ -117,15 +125,22 @@ private fun RecipeCard(
                     .crossfade(true)
                     .build(),
                 contentDescription = recipe.title,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
                 error = painterResource(id = R.drawable.ic_connection_error),
                 placeholder = painterResource(id = R.drawable.loading_img),
                 contentScale = ContentScale.FillWidth
             )
             Text(
                 text = recipe.title,
-                modifier = Modifier.padding(16.dp),
-                style = MaterialTheme.typography.h6
+                modifier = Modifier.padding(start = 14.dp, end = 14.dp, top = 14.dp, bottom = 3.dp),
+                style = MaterialTheme.typography.h2
+            )
+            Text(
+                text = "${recipe.readyInMinutes} min · $diet",
+                modifier = Modifier.padding(horizontal = 14.dp),
+                style = MaterialTheme.typography.h3
             )
         }
     }
@@ -175,7 +190,7 @@ fun NavigationDrawer(
                         }
                         navController.navigate(item.route)
                     },
-                backgroundColor = if (selected) Purple500 else Color.White,
+                backgroundColor = if (selected) MaterialTheme.colors.background else MaterialTheme.colors.surface,
                 elevation = 0.dp,
                 shape = RoundedCornerShape(12.dp)
             ) {
@@ -186,7 +201,8 @@ fun NavigationDrawer(
                 ) {
                     Text(
                         text = item.name,
-                        modifier = Modifier.padding(start = 24.dp)
+                        modifier = Modifier.padding(start = 24.dp),
+                        style = MaterialTheme.typography.h2
                     )
                 }
             }
