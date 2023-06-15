@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.webkit.MimeTypeMap
+import android.widget.Space
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,18 +22,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.RadioButton
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -52,6 +59,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
@@ -213,6 +221,86 @@ fun NavigationDrawer(
 }
 
 /**
+ * Composable that shows the name, category, cook-time and diet. It is used while showing the detailed info of a recipe
+ */
+@Composable
+fun RecipeInfoCard(
+    title: String,
+    category: String = "",
+    cookTime: String = "",
+    diet: String = "",
+    spacerHeight: Dp = 0.dp,
+    modifier: Modifier = Modifier
+){
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(spacerHeight))
+
+        Card(
+            modifier = Modifier.width(300.dp),
+            backgroundColor = MaterialTheme.colors.surface
+        ) {
+            Column(
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.h1,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+
+                Divider(
+                    color = Color.LightGray,
+                    modifier = Modifier
+                        .height(1.dp)
+                        .clip(CircleShape)
+                )
+
+                Row(
+                    modifier = Modifier.padding(vertical = 10.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.tags_24),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = category,
+                        style = MaterialTheme.typography.h3,
+                        modifier = Modifier.padding(start = 4.dp, end = 16.dp)
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.time_forward_24),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "$cookTime min",
+                        style = MaterialTheme.typography.h3,
+                        modifier = Modifier.padding(start = 4.dp, end = 16.dp)
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.broccoli_24),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = diet,
+                        style = MaterialTheme.typography.h3,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
  * Composable for creating or updating a recipe in the database
  */
 @Composable
@@ -226,7 +314,8 @@ fun MyRecipeEditBody(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
         MyRecipeInputForm(
@@ -301,6 +390,46 @@ fun MyRecipeInputForm(
         )
 
         OutlinedTextField(
+            value = myRecipeUiState.category,
+            onValueChange = { onRecipeValueChange(myRecipeUiState.copy(category = it)) },
+            label = { Text(stringResource(id = R.string.recipe_category_label))},
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            singleLine = true
+        )
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(text = stringResource(id = R.string.recipe_vegetarian_label))
+            Row(
+                modifier = Modifier.selectable(
+                    selected = myRecipeUiState.vegetarian,
+                    onClick = { onRecipeValueChange(myRecipeUiState.copy(vegetarian = true)) }
+                ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = myRecipeUiState.vegetarian,
+                    onClick = { onRecipeValueChange(myRecipeUiState.copy(vegetarian = true)) }
+                )
+                Text(text = "vegetarian")
+            }
+
+            Row(
+                modifier = Modifier.selectable(
+                    selected = !myRecipeUiState.vegetarian,
+                    onClick = { onRecipeValueChange(myRecipeUiState.copy(vegetarian = false)) }
+                ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = !myRecipeUiState.vegetarian,
+                    onClick = { onRecipeValueChange(myRecipeUiState.copy(vegetarian = false)) }
+                )
+                Text(text = "non-vegetarian")
+            }
+        }
+
+        OutlinedTextField(
             value = myRecipeUiState.servings,
             onValueChange = { onRecipeValueChange(myRecipeUiState.copy(servings = it)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -366,7 +495,10 @@ fun ImagePicker(
     }
 }
 
-fun copyImageToInternalStorage(context: Context, imageUri: Uri): String? {
+fun copyImageToInternalStorage(
+    context: Context,
+    imageUri: Uri
+): String? {
     // Generate a unique file name
     val fileName = "image_${System.currentTimeMillis()}"
 

@@ -3,6 +3,7 @@ package com.example.dishpedia.ui.screens
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,19 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,17 +26,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.dishpedia.R
+import com.example.dishpedia.utils.RecipeInfoCard
 import com.example.dishpedia.viewmodel.AppViewModelProvider
 import com.example.dishpedia.viewmodel.MyRecipeDetailViewModel
 import com.example.dishpedia.viewmodel.TabsViewModel
@@ -62,101 +54,118 @@ fun MyRecipeDetailsScreen(
     val coroutineScope = rememberCoroutineScope()
     var deleteConfirmation by rememberSaveable { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            MyRecipeDetailsScreenAppBar(
-                myRecipeUiState = myRecipeUiState,
-                navigateUp = onNavigateUp,
-                navigateToEditMyRecipe = navigateToEditMyRecipe,
-                onDelete = {
-                    deleteConfirmation = true
-                }
-            )
-        }
-    ) {innerPadding ->
-        Column(
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(innerPadding)
+                .height(300.dp),
+            shape = MaterialTheme.shapes.large,
+            elevation = 0.dp
         ) {
-            TabRow(
-                selectedTabIndex = tabIndex.value!!,
-                backgroundColor = MaterialTheme.colors.surface
-            ) {
-                tabsViewModel.tabs.forEachIndexed{ index, title ->
-                    Tab(
-                        selected = tabIndex.value!! == index,
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        onClick = { tabsViewModel.updateTabIndex(index) }
-                    ) {
-                        Text(
-                            text = title,
-                            style = MaterialTheme.typography.h3
-                        )
-                    }
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(myRecipeUiState.image)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = myRecipeUiState.title,
+                error = painterResource(id = R.drawable.ic_broken_image),
+                placeholder = painterResource(id = R.drawable.loading_img),
+                contentScale = ContentScale.FillBounds
+            )
+        }
+
+        RecipeInfoCard(
+            title = myRecipeUiState.title,
+            category = myRecipeUiState.category,
+            cookTime = myRecipeUiState.readyInMinutes,
+            diet = if(myRecipeUiState.vegetarian){
+                "veg"
+            } else if(myRecipeUiState.vegetarian.not()){
+                "non-veg"
+            } else {
+                ""
+            },
+            spacerHeight = 250.dp
+        )
+
+        TabRow(
+            selectedTabIndex = tabIndex.value!!,
+            backgroundColor = MaterialTheme.colors.surface
+        ) {
+            tabsViewModel.tabs.forEachIndexed{ index, title ->
+                Tab(
+                    selected = tabIndex.value!! == index,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    onClick = { tabsViewModel.updateTabIndex(index) }
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.h3
+                    )
                 }
             }
+        }
 
-            when(tabIndex.value){
-                0 -> SummaryScreen(myRecipeUiState, tabsViewModel)
-                1 -> IngredientsScreen(myRecipeUiState, tabsViewModel)
-                2 -> InstructionsScreen(myRecipeUiState, tabsViewModel)
-            }
-            if(deleteConfirmation){
-                DeleteConfirmationDialog(
-                    onDeleteConfirm = {
-                        deleteConfirmation = false
-                        coroutineScope.launch {
-                            myRecipeDetailViewModel.deleteMyRecipe()
-                            onNavigateUp()
-                        }
-                    },
-                    onDeleteCancel = { deleteConfirmation = false })
-            }
+        when(tabIndex.value){
+            0 -> SummaryScreen(myRecipeUiState, tabsViewModel)
+            1 -> IngredientsScreen(myRecipeUiState, tabsViewModel)
+            2 -> InstructionsScreen(myRecipeUiState, tabsViewModel)
+        }
+        if(deleteConfirmation){
+            DeleteConfirmationDialog(
+                onDeleteConfirm = {
+                    deleteConfirmation = false
+                    coroutineScope.launch {
+                        myRecipeDetailViewModel.deleteMyRecipe()
+                        onNavigateUp()
+                    }
+                },
+                onDeleteCancel = { deleteConfirmation = false }
+            )
         }
     }
 }
 
-@Composable
-fun MyRecipeDetailsScreenAppBar(
-    myRecipeUiState: MyRecipeUiState,
-    navigateUp: () -> Unit,
-    navigateToEditMyRecipe: (Int) -> Unit,
-    onDelete: () -> Unit,
-    modifier: Modifier = Modifier
-){
-    TopAppBar(
-        title = { Text(
-            text = myRecipeUiState.title,
-            style = MaterialTheme.typography.h2
-        )},
-        modifier = modifier,
-        backgroundColor = MaterialTheme.colors.surface,
-        navigationIcon = {
-            IconButton(onClick = navigateUp) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(id = R.string.back_button)
-                )
-            }
-        },
-        actions = {
-            IconButton(onClick = { navigateToEditMyRecipe(myRecipeUiState.id) }) {
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    contentDescription = "Edit Recipe"
-                )
-            }
-            IconButton(onClick = onDelete) {
-                Icon(
-                    imageVector = Icons.Filled.Delete,
-                    contentDescription = stringResource(id = R.string.delete_button)
-                )
-            }
-        },
-        elevation = 0.dp
-    )
-}
+//@Composable
+//fun MyRecipeDetailsScreenAppBar(
+//    myRecipeUiState: MyRecipeUiState,
+//    navigateUp: () -> Unit,
+//    navigateToEditMyRecipe: (Int) -> Unit,
+//    onDelete: () -> Unit,
+//    modifier: Modifier = Modifier
+//){
+//    TopAppBar(
+//        title = { Text(text = "") },
+//        modifier = modifier,
+//        backgroundColor = Color.Transparent,
+//        navigationIcon = {
+//            IconButton(onClick = navigateUp) {
+//                Icon(
+//                    imageVector = Icons.Filled.ArrowBack,
+//                    contentDescription = stringResource(id = R.string.back_button)
+//                )
+//            }
+//        },
+//        actions = {
+//            IconButton(onClick = { navigateToEditMyRecipe(myRecipeUiState.id) }) {
+//                Icon(
+//                    imageVector = Icons.Filled.Edit,
+//                    contentDescription = "Edit Recipe"
+//                )
+//            }
+//            IconButton(onClick = onDelete) {
+//                Icon(
+//                    imageVector = Icons.Filled.Delete,
+//                    contentDescription = stringResource(id = R.string.delete_button)
+//                )
+//            }
+//        },
+//        elevation = 0.dp
+//    )
+//}
 
 @Composable
 private fun DeleteConfirmationDialog(
@@ -203,52 +212,6 @@ private fun SummaryScreen(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(250.dp),
-            shape = MaterialTheme.shapes.large,
-            elevation = 0.dp
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(myRecipeUiState.image)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = myRecipeUiState.title,
-                error = painterResource(id = R.drawable.ic_broken_image),
-                placeholder = painterResource(id = R.drawable.loading_img),
-                contentScale = ContentScale.FillWidth
-            )
-        }
-        Text(
-            text = myRecipeUiState.title,
-            fontSize = 30.sp,
-            style = MaterialTheme.typography.h2,
-            modifier = Modifier.padding(start = 14.dp, end = 14.dp, top = 5.dp, bottom = 15.dp)
-        )
-        Text(
-            text = stringResource(id = R.string.cook_time),
-            style = MaterialTheme.typography.h3,
-            modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 4.dp)
-        )
-        Text(
-            text = myRecipeUiState.readyInMinutes,
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.onSecondary,
-            modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 8.dp)
-        )
-        Text(
-            text = stringResource(id = R.string.servings),
-            style = MaterialTheme.typography.h3,
-            modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 4.dp)
-        )
-        Text(
-            text = myRecipeUiState.servings,
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.onSecondary,
-            modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 15.dp)
-        )
         Text(
             text = stringResource(id = R.string.description),
             style = MaterialTheme.typography.h3,
