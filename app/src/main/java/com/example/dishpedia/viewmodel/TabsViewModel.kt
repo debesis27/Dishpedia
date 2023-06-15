@@ -12,7 +12,7 @@ class TabsViewModel: ViewModel() {
 
     private var isSwipeToTheLeft: Boolean = false
     private val draggableState = DraggableState { delta ->
-        isSwipeToTheLeft= delta > 0
+        isSwipeToTheLeft = delta > 0
     }
 
     private val _dragState = MutableLiveData(draggableState)

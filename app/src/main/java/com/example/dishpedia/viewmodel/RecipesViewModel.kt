@@ -113,7 +113,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
     private fun applyCategoryQueries(courseType: String): HashMap<String, String> {
         val queries: HashMap<String, String> = HashMap()
 
-        queries[QUERY_NUMBER] = "3" //TODO: Change this to 10 or smth, same for the query below
+        queries[QUERY_NUMBER] = "1" //TODO: Change this to 10 or smth, same for the query below
         queries[QUERY_API_KEY] = API_KEY
         queries[QUERY_TYPE] = courseType
         queries[QUERY_INSTRUCTIONS] = "true"
@@ -127,7 +127,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
         val queries: HashMap<String, String> = HashMap()
 
         queries[QUERY] = searchTerm
-        queries[QUERY_NUMBER] = "3"
+        queries[QUERY_NUMBER] = "1"
         queries[QUERY_API_KEY] = API_KEY
         queries[QUERY_INSTRUCTIONS] = "true"
         queries[QUERY_ADD_RECIPE_INFORMATION] = "true"

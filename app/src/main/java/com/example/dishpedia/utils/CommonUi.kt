@@ -27,6 +27,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -235,7 +237,8 @@ fun MyRecipeEditBody(
         Button(
             onClick = onSaveClick,
             enabled = myRecipeUiState.actionEnabled,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface)
         ) {
             Text(text = stringResource(id = R.string.save_button))
         }
@@ -353,7 +356,8 @@ fun ImagePicker(
         placeholder = painterResource(id = R.drawable.image_placeholder)
     )
 
-    Button(onClick = {
+    Button(colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
+        onClick = {
         photoPickerLauncher.launch(
             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
         )

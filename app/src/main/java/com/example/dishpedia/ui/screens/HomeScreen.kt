@@ -206,6 +206,7 @@ fun HomeScreen(
     }
 }
 
+//TODO: Change the bg color of images in carousel
 @Composable
 fun Carousel(
     count: Int,
