@@ -6,12 +6,14 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.webkit.MimeTypeMap
-import android.widget.Space
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,14 +43,20 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
+import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,6 +69,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -74,6 +83,7 @@ import com.example.dishpedia.models.Recipes
 import com.example.dishpedia.ui.theme.Purple500
 import com.example.dishpedia.viewmodel.RecipeUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
+import com.example.dishpedia.viewmodel.TabsViewModel
 import com.example.dishpedia.viewmodel.uiState.MyRecipeUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -239,7 +249,7 @@ fun RecipeInfoCard(
         Spacer(modifier = Modifier.height(spacerHeight))
 
         Card(
-            modifier = Modifier.width(300.dp),
+            modifier = Modifier.width(350.dp),
             backgroundColor = MaterialTheme.colors.surface
         ) {
             Column(
@@ -296,6 +306,124 @@ fun RecipeInfoCard(
                     )
                 }
             }
+        }
+    }
+}
+
+/**
+ * Composable to show the summary and nutrition of a recipe
+ */
+@Composable
+fun SummaryScreen(
+    summary: String,
+    tabsViewModel: TabsViewModel
+){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 23.dp, end = 23.dp, bottom = 20.dp)
+            .draggable(
+                state = tabsViewModel.dragState.value!!,
+                orientation = Orientation.Horizontal,
+                onDragStarted = { },
+                onDragStopped = {
+                    tabsViewModel.updateTabIndexBasedOnSwipe()
+                }
+            ),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top
+    ) {
+        Text(
+            text = summary,
+            fontSize = 18.sp,
+            style = MaterialTheme.typography.body1,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+    }
+}
+
+/**
+ * Composable to show the servings and ingredients of a recipe
+ */
+@Composable
+fun IngredientsScreen(
+    servings: String,
+    ingredients: List<String>,
+    tabsViewModel: TabsViewModel
+){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 23.dp, end = 23.dp, bottom = 20.dp)
+            .draggable(
+                state = tabsViewModel.dragState.value!!,
+                orientation = Orientation.Horizontal,
+                onDragStarted = { },
+                onDragStopped = {
+                    tabsViewModel.updateTabIndexBasedOnSwipe()
+                }
+            ),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top
+    ) {
+        var i = 1
+
+        Row(modifier = Modifier.padding(bottom = 10.dp)) {
+            Text(
+                text = "Serves: ",
+                style = MaterialTheme.typography.h2,
+                modifier = Modifier.padding(start = 4.dp)
+            )
+            Text(
+                text = servings,
+                style = MaterialTheme.typography.h2
+            )
+        }
+
+        ingredients.forEach{ item ->
+            Text(
+                text = "$i) $item",
+                fontSize = 18.sp,
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(start = 4.dp, bottom = 3.dp)
+            )
+            i += 1
+        }
+    }
+}
+
+/**
+ * Composable to show the procedure of a recipe
+ */
+@Composable
+fun InstructionsScreen(
+    instructions: List<String>,
+    tabsViewModel: TabsViewModel
+){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 23.dp, end = 23.dp, bottom = 20.dp)
+            .draggable(
+                state = tabsViewModel.dragState.value!!,
+                orientation = Orientation.Horizontal,
+                onDragStarted = { },
+                onDragStopped = {
+                    tabsViewModel.updateTabIndexBasedOnSwipe()
+                }
+            ),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top
+    ){
+        var i = 1
+        instructions.forEach{ items ->
+            Text(
+                text = "$i) $items",
+                fontSize = 18.sp,
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(bottom = 3.dp)
+            )
+            i += 1
         }
     }
 }
@@ -401,10 +529,12 @@ fun MyRecipeInputForm(
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(text = stringResource(id = R.string.recipe_vegetarian_label))
             Row(
-                modifier = Modifier.selectable(
-                    selected = myRecipeUiState.vegetarian,
-                    onClick = { onRecipeValueChange(myRecipeUiState.copy(vegetarian = true)) }
-                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = myRecipeUiState.vegetarian,
+                        onClick = { onRecipeValueChange(myRecipeUiState.copy(vegetarian = true)) }
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
@@ -415,10 +545,12 @@ fun MyRecipeInputForm(
             }
 
             Row(
-                modifier = Modifier.selectable(
-                    selected = !myRecipeUiState.vegetarian,
-                    onClick = { onRecipeValueChange(myRecipeUiState.copy(vegetarian = false)) }
-                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = !myRecipeUiState.vegetarian,
+                        onClick = { onRecipeValueChange(myRecipeUiState.copy(vegetarian = false)) }
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(

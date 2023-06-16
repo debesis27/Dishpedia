@@ -12,5 +12,6 @@ val background_color = Color(0xFFFAF2EB)
 val card_color = Color(0xFFD2C2B3)
 
 val primary_text_color = Color(0xFF282727)
-val secondary_text_color = Color(0xFF414141)
+val secondary_text_color = Color(0xFF717171)
 val numeric_text_color = Color(0xFF2B4E10)
+val tab_color = Color(0xFF5C7F3F)

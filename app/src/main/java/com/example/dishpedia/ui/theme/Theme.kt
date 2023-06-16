@@ -16,6 +16,7 @@ private val LightColorPalette = lightColors(
     background = background_color,
     surface = card_color,
     primary = primary_text_color,
+    onPrimary = tab_color,
     secondary = secondary_text_color,
     onSecondary = numeric_text_color,
 

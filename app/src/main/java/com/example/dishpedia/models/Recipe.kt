@@ -16,7 +16,7 @@ data class Recipe(
     @SerializedName("extendedIngredients") val extendedIngredients: List<ExtendedIngredient>,
     @SerializedName("id") @PrimaryKey val id: Int = 0,
     @SerializedName("image") val image: String = "",
-    @SerializedName("instructions") val instructions: String = "",
+    @SerializedName("procedure") val instructions: String = "",
     @SerializedName("readyInMinutes") val readyInMinutes: Int = 0,
     @SerializedName("servings") val servings: Int = 0,
     @SerializedName("summary") val summary: String = "",
