@@ -34,11 +34,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
@@ -47,27 +45,26 @@ import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
@@ -80,11 +77,10 @@ import com.example.dishpedia.models.NavigationItem
 import com.example.dishpedia.models.NavigationItemsProvider
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
-import com.example.dishpedia.ui.theme.Purple500
-import com.example.dishpedia.viewmodel.RecipeUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
 import com.example.dishpedia.viewmodel.TabsViewModel
 import com.example.dishpedia.viewmodel.uiState.MyRecipeUiState
+import de.charlex.compose.HtmlText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okio.IOException
@@ -248,10 +244,13 @@ fun RecipeInfo(
     modifier: Modifier = Modifier
 ){
     val tabIndex = tabsViewModel.tabIndex.observeAsState()
+    var sizeOfRecipeInfoCard by remember{ mutableStateOf(0.dp) }
+    val density = LocalDensity.current
 
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
             .background(color = MaterialTheme.colors.background)
     ){
         Card(
@@ -279,16 +278,21 @@ fun RecipeInfo(
             cookTime = cookTime,
             diet = if(vegetarian){
                 "veg"
-            } else if(vegetarian.not()){
+            } else if(!vegetarian){
                 "non-veg"
             } else {
                 ""
             },
-            spacerHeight = 250.dp
+            spacerHeight = 250.dp,
+            modifier = Modifier.onGloballyPositioned {
+                sizeOfRecipeInfoCard = with(density){
+                    it.size.height.toDp()
+                }
+            }
         )
 
         Column {
-            Spacer(modifier = Modifier.height(400.dp))
+            Spacer(modifier = Modifier.height(250.dp + sizeOfRecipeInfoCard))
             TabRow(
                 selectedTabIndex = tabIndex.value!!,
                 backgroundColor = Color.Transparent,
@@ -309,7 +313,7 @@ fun RecipeInfo(
                     Tab(
                         selected = tabIndex.value!! == index,
                         modifier = Modifier
-                            .padding(bottom = 12.dp),
+                            .padding(top = 23.dp, bottom = 12.dp),
                         selectedContentColor = MaterialTheme.colors.onPrimary,
                         unselectedContentColor = MaterialTheme.colors.secondary,
                         onClick = { tabsViewModel.updateTabIndex(index) }
@@ -354,13 +358,15 @@ fun RecipeInfoCard(
     modifier: Modifier = Modifier
 ){
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(spacerHeight))
 
         Card(
-            modifier = Modifier.width(350.dp),
+            modifier = modifier
+                .width(350.dp),
             backgroundColor = MaterialTheme.colors.surface
         ) {
             Column(
@@ -444,7 +450,7 @@ fun SummaryScreen(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(
+        HtmlText(
             text = summary,
             fontSize = 18.sp,
             style = MaterialTheme.typography.body1,
@@ -462,6 +468,8 @@ fun IngredientsScreen(
     ingredients: List<String>,
     tabsViewModel: TabsViewModel
 ){
+    var i = 1
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -477,8 +485,6 @@ fun IngredientsScreen(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-        var i = 1
-
         Row(modifier = Modifier.padding(bottom = 10.dp)) {
             Text(
                 text = "Serves: ",
@@ -511,6 +517,8 @@ fun InstructionsScreen(
     instructions: List<String>,
     tabsViewModel: TabsViewModel
 ){
+    var i = 1
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -526,10 +534,9 @@ fun InstructionsScreen(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ){
-        var i = 1
-        instructions.forEach{ items ->
+        instructions.forEach{ item ->
             Text(
-                text = "$i) $items",
+                text = "$i) $item",
                 fontSize = 18.sp,
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(bottom = 3.dp)

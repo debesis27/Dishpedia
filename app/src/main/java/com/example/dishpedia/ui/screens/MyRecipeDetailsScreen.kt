@@ -1,9 +1,13 @@
 package com.example.dishpedia.ui.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
@@ -42,39 +46,45 @@ fun MyRecipeDetailsScreen(
     val coroutineScope = rememberCoroutineScope()
     var deleteConfirmation by rememberSaveable { mutableStateOf(false) }
 
-    RecipeInfo(
-        image = myRecipeUiState.image.toString(),
-        title = myRecipeUiState.title,
-        category = myRecipeUiState.category,
-        cookTime = myRecipeUiState.readyInMinutes,
-        vegetarian = myRecipeUiState.vegetarian,
-        summary = myRecipeUiState.summary,
-        servings = myRecipeUiState.servings,
-        ingredients = myRecipeUiState.ingredient.lines(),
-        instructions = myRecipeUiState.instructions.lines(),
-        tabsViewModel = tabsViewModel
-    )
-
-    MyRecipeDetailsScreenAppBar(
-        myRecipeUiState = myRecipeUiState,
-        navigateUp = onNavigateUp,
-        navigateToEditMyRecipe = navigateToEditMyRecipe,
-        onDelete = {
-            deleteConfirmation = true
-        }
-    )
-
-    if(deleteConfirmation){
-        DeleteConfirmationDialog(
-            onDeleteConfirm = {
-                deleteConfirmation = false
-                coroutineScope.launch {
-                    myRecipeDetailViewModel.deleteMyRecipe()
-                    onNavigateUp()
-                }
-            },
-            onDeleteCancel = { deleteConfirmation = false }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
+    ) {
+        RecipeInfo(
+            image = myRecipeUiState.image.toString(),
+            title = myRecipeUiState.title,
+            category = myRecipeUiState.category,
+            cookTime = myRecipeUiState.readyInMinutes,
+            vegetarian = myRecipeUiState.vegetarian,
+            summary = myRecipeUiState.summary,
+            servings = myRecipeUiState.servings,
+            ingredients = myRecipeUiState.ingredient.lines(),
+            instructions = myRecipeUiState.instructions.lines(),
+            tabsViewModel = tabsViewModel
         )
+
+        MyRecipeDetailsScreenAppBar(
+            myRecipeUiState = myRecipeUiState,
+            navigateUp = onNavigateUp,
+            navigateToEditMyRecipe = navigateToEditMyRecipe,
+            onDelete = {
+                deleteConfirmation = true
+            }
+        )
+
+        if(deleteConfirmation){
+            DeleteConfirmationDialog(
+                onDeleteConfirm = {
+                    deleteConfirmation = false
+                    coroutineScope.launch {
+                        myRecipeDetailViewModel.deleteMyRecipe()
+                        onNavigateUp()
+                    }
+                },
+                onDeleteCancel = { deleteConfirmation = false }
+            )
+        }
     }
 }
 
