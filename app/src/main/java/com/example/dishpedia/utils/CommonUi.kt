@@ -231,7 +231,118 @@ fun NavigationDrawer(
 }
 
 /**
- * Composable that shows the name, category, cook-time and diet. It is used while showing the detailed info of a recipe
+ * Composable that shows the complete information of a recipe using [RecipeInfoCard], [SummaryScreen], [IngredientsScreen] and [InstructionsScreen]
+ */
+@Composable
+fun RecipeInfo(
+    image: String,
+    title: String,
+    category: String,
+    cookTime: String,
+    vegetarian: Boolean,
+    summary: String,
+    servings: String,
+    ingredients: List<String>,
+    instructions: List<String>,
+    tabsViewModel: TabsViewModel,
+    modifier: Modifier = Modifier
+){
+    val tabIndex = tabsViewModel.tabIndex.observeAsState()
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colors.background)
+    ){
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp),
+            shape = MaterialTheme.shapes.large,
+            elevation = 0.dp
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(image)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+                error = painterResource(id = R.drawable.ic_broken_image),
+                placeholder = painterResource(id = R.drawable.loading_img),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        RecipeInfoCard(
+            title = title,
+            category = category,
+            cookTime = cookTime,
+            diet = if(vegetarian){
+                "veg"
+            } else if(vegetarian.not()){
+                "non-veg"
+            } else {
+                ""
+            },
+            spacerHeight = 250.dp
+        )
+
+        Column {
+            Spacer(modifier = Modifier.height(400.dp))
+            TabRow(
+                selectedTabIndex = tabIndex.value!!,
+                backgroundColor = Color.Transparent,
+                indicator = @Composable {
+                    TabRowDefaults.Indicator(
+                        height = 0.dp,
+                        color = Color.Transparent
+                    )
+                },
+                divider = @Composable {
+                    TabRowDefaults.Divider(
+                        thickness = 0.dp,
+                        color = Color.Transparent
+                    )
+                }
+            ) {
+                tabsViewModel.tabs.forEachIndexed{ index, title ->
+                    Tab(
+                        selected = tabIndex.value!! == index,
+                        modifier = Modifier
+                            .padding(bottom = 12.dp),
+                        selectedContentColor = MaterialTheme.colors.onPrimary,
+                        unselectedContentColor = MaterialTheme.colors.secondary,
+                        onClick = { tabsViewModel.updateTabIndex(index) }
+                    ) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.h2
+                        )
+                    }
+                }
+            }
+
+            when(tabIndex.value){
+                0 -> SummaryScreen(
+                    summary = summary,
+                    tabsViewModel = tabsViewModel
+                )
+                1 -> IngredientsScreen(
+                    servings = servings,
+                    ingredients = ingredients,
+                    tabsViewModel = tabsViewModel
+                )
+                2 -> InstructionsScreen(
+                    instructions = instructions,
+                    tabsViewModel =  tabsViewModel
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Composable that shows the name, category, cook-time and diet.
  */
 @Composable
 fun RecipeInfoCard(
