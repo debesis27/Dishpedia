@@ -37,7 +37,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -45,8 +44,6 @@ import com.example.dishpedia.R
 import com.example.dishpedia.models.CategoryListItemsProvider
 import com.example.dishpedia.models.NavigationDrawerItemsProvider
 import com.example.dishpedia.models.NavigationItemsProvider
-import com.example.dishpedia.models.Recipe
-import com.example.dishpedia.utils.ErrorScreen
 import com.example.dishpedia.utils.NavigationDrawer
 import com.example.dishpedia.utils.RecipeList
 import com.example.dishpedia.viewmodel.CategoryRecipesUiState
@@ -190,7 +187,7 @@ fun HomeScreen(
                         recipesViewModel,
                         navController
                     )
-                    is RecipesUiState.Loading -> { /* Do Nothing */ }
+                    is RecipesUiState.Loading -> LoadingScreen()
                     is RecipesUiState.Error -> ErrorScreen()
                 }
 
@@ -206,7 +203,42 @@ fun HomeScreen(
     }
 }
 
-//TODO: Change the bg color of images in carousel
+@Composable
+fun HomeScreenAppBar(
+    modifier: Modifier = Modifier,
+    coroutineScope: CoroutineScope,
+    scaffoldState: ScaffoldState,
+    navController: NavController
+){
+    TopAppBar(
+        title = { Text(
+            text = stringResource(id = R.string.app_name),
+            style = MaterialTheme.typography.h1
+        ) },
+        modifier = modifier,
+        backgroundColor = MaterialTheme.colors.surface,
+        navigationIcon = {
+            IconButton(
+                onClick = { coroutineScope.launch { scaffoldState.drawerState.open() } }
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Menu,
+                    contentDescription = stringResource(R.string.menu_button)
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = { navController.navigate(NavigationItemsProvider.Search.route) }) {
+                Icon(
+                    imageVector = Icons.Rounded.Search,
+                    contentDescription = stringResource(id = R.string.search_button),
+                    tint = Color.Black
+                )
+            }
+        }
+    )
+}
+
 @Composable
 fun Carousel(
     count: Int,
@@ -238,37 +270,13 @@ fun Carousel(
 }
 
 @Composable
-fun HomeScreenAppBar(
-    modifier: Modifier = Modifier,
-    coroutineScope: CoroutineScope,
-    scaffoldState: ScaffoldState,
-    navController: NavController
-){
-    TopAppBar(
-        title = { Text(
-            text = stringResource(id = R.string.app_name),
-            style = MaterialTheme.typography.h1
-        ) },
-        modifier = modifier,
-        backgroundColor = MaterialTheme.colors.surface,
-        navigationIcon = {
-                IconButton(
-                    onClick = { coroutineScope.launch { scaffoldState.drawerState.open() } }
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Menu,
-                        contentDescription = stringResource(R.string.menu_button)
-                    )
-                }
-        },
-        actions = {
-            IconButton(onClick = { navController.navigate(NavigationItemsProvider.Search.route) }) {
-                Icon(
-                    imageVector = Icons.Rounded.Search,
-                    contentDescription = stringResource(id = R.string.search_button),
-                    tint = Color.Black
-                )
-            }
-        }
-    )
+private fun ErrorScreen(){
+    Box(modifier = Modifier.fillMaxWidth()){
+        Text(text = "ERROR")
+    }
+}
+
+@Composable
+private fun LoadingScreen(){
+
 }

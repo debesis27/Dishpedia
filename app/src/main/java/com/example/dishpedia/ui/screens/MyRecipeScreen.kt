@@ -35,8 +35,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -122,9 +122,9 @@ fun MyRecipeCard(
                     .build(),
                 contentDescription = myRecipe.title,
                 modifier = Modifier
-                    .size(110.dp)
+                    .size(120.dp)
                     .clip(RoundedCornerShape(8.dp)),
-                error = painterResource(id = R.drawable.ic_connection_error),
+                error = painterResource(id = R.drawable.image_placeholder),
                 placeholder = painterResource(id = R.drawable.loading_img),
                 contentScale = ContentScale.Crop
             )
@@ -132,7 +132,9 @@ fun MyRecipeCard(
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 4.dp)
             ) {
                 Text(
                     text = myRecipe.title,
@@ -142,7 +144,8 @@ fun MyRecipeCard(
                 Text(
                     text = myRecipe.summary,
                     style = MaterialTheme.typography.h3,
-                    //TODO: Add a way to change the end of summary into read more... when text is too long
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

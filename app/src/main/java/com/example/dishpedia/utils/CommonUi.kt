@@ -9,11 +9,18 @@ import android.webkit.MimeTypeMap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,18 +60,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
@@ -231,7 +243,7 @@ fun NavigationDrawer(
  */
 @Composable
 fun RecipeInfo(
-    image: String,
+    image: String?,
     title: String,
     category: String,
     cookTime: String,
@@ -266,7 +278,7 @@ fun RecipeInfo(
                     .crossfade(true)
                     .build(),
                 contentDescription = null,
-                error = painterResource(id = R.drawable.ic_broken_image),
+                error = painterResource(id = R.drawable.image_placeholder),
                 placeholder = painterResource(id = R.drawable.loading_img),
                 contentScale = ContentScale.Crop
             )
@@ -450,11 +462,9 @@ fun SummaryScreen(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-        HtmlText(
+        ExpandableText(
             text = summary,
-            fontSize = 18.sp,
-            style = MaterialTheme.typography.body1,
-            modifier = Modifier.padding(bottom = 8.dp)
+            minimizedMaxLines = 5
         )
     }
 }
@@ -594,7 +604,6 @@ fun MyRecipeInputForm(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        //TODO: Add a method to save the obtained image
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -711,6 +720,9 @@ fun MyRecipeInputForm(
     }
 }
 
+/**
+ * Composable to pick image from the gallery
+ */
 @Composable
 fun ImagePicker(
     context: Context,
@@ -724,7 +736,7 @@ fun ImagePicker(
             if (copiedImagePath != null) {
                 onRecipeValueChange(myRecipeUiState.copy(image = copiedImagePath.toUri()))
             }
-        } //TODO: Add placeholder uri here as well
+        }
     )
 
     AsyncImage(
@@ -804,6 +816,75 @@ private fun getFileExtension(contentResolver: ContentResolver, uri: Uri): String
         ?: ""
 }
 
+/**
+ * Composable to show collapsable text
+ */
+@Composable
+fun ExpandableText(
+    modifier: Modifier = Modifier,
+    text: String,
+    minimizedMaxLines: Int,
+    style: TextStyle = MaterialTheme.typography.body1
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var hasVisualOverflow by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        HtmlText(
+            text = text,
+            maxLines = if (expanded) Int.MAX_VALUE else minimizedMaxLines,
+            onTextLayout = { if(it.hasVisualOverflow) hasVisualOverflow = true },
+            style = style
+        )
+        if (hasVisualOverflow && !expanded) {
+            Row(
+                modifier = Modifier.align(Alignment.BottomEnd),
+                verticalAlignment = Alignment.Bottom
+            ) {
+//                val lineHeightDp: Dp = with(LocalDensity.current) { style.lineHeight.toDp() }
+                Spacer(
+                    modifier = Modifier
+                        .width(48.dp)
+                        .height(18.dp)
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(Color.Transparent, MaterialTheme.colors.background)
+                            )
+                        )
+                )
+                Text(
+                    text = "Show More",
+                    style = MaterialTheme.typography.h3,
+                    modifier = Modifier
+                        .background(MaterialTheme.colors.background)
+                        .padding(start = 4.dp)
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = { expanded = !expanded }
+                        )
+                )
+            }
+        }else if (hasVisualOverflow && expanded){
+            Row(
+                modifier = Modifier.align(Alignment.BottomEnd),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Text(
+                    text = "Show Less",
+                    style = MaterialTheme.typography.h3,
+                    modifier = Modifier
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = { expanded = !expanded }
+                        )
+                )
+            }
+        }
+    }
+}
+
 //@Composable
 //fun AddTextField(
 //    myRecipeUiState: MyRecipeUiState,
@@ -843,10 +924,29 @@ private fun getFileExtension(contentResolver: ContentResolver, uri: Uri): String
 //    }
 //}
 
-//TODO: Make a better Error Screen
-@Composable
-fun ErrorScreen(){
-    Box(modifier = Modifier.fillMaxWidth()){
-        Text(text = "ERROR")
-    }
+/**
+ * Modifier extension function made to add shimmer effect
+ */
+fun Modifier.shimmerBackground(shape: Shape = RectangleShape): Modifier = composed {
+    val transition = rememberInfiniteTransition()
+
+    val translateAnimation by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 400f,
+        animationSpec = infiniteRepeatable(
+            tween(durationMillis = 1500, easing = LinearOutSlowInEasing),
+            RepeatMode.Restart
+        ),
+    )
+    val shimmerColors = listOf(
+        Color.LightGray.copy(alpha = 0.9f),
+        Color.LightGray.copy(alpha = 0.4f),
+    )
+    val brush = Brush.linearGradient(
+        colors = shimmerColors,
+        start = Offset(translateAnimation, translateAnimation),
+        end = Offset(translateAnimation + 100f, translateAnimation + 100f),
+        tileMode = TileMode.Mirror,
+    )
+    return@composed this.then(background(brush, shape))
 }

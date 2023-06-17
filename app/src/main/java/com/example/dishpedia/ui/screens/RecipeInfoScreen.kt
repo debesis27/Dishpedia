@@ -3,6 +3,7 @@ package com.example.dishpedia.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -18,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dishpedia.R
 import com.example.dishpedia.models.Recipe
-import com.example.dishpedia.utils.ErrorScreen
 import com.example.dishpedia.utils.RecipeInfo
 import com.example.dishpedia.viewmodel.RecipeUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
@@ -31,7 +31,7 @@ fun RecipeInfoScreen(
     tabsViewModel: TabsViewModel = viewModel()
 ){
     when(val recipeUiState = recipeViewModel.recipeUiState){
-        is RecipeUiState.Loading -> ErrorScreen() //TODO: Make a Loading page in CommonUi.kt
+        is RecipeUiState.Loading -> LoadingScreen()
         is RecipeUiState.Error -> ErrorScreen()
         is RecipeUiState.Success -> RecipeDetailsScreen(
             recipe = recipeUiState.recipe,
@@ -99,10 +99,22 @@ private fun RecipeInfoScreenAppBar(
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = stringResource(id = R.string.back_button),
-                    tint = Color.White
+                    tint = Color.Black
                 )
             }
         },
         elevation = 0.dp
     )
+}
+
+@Composable
+private fun ErrorScreen(){
+    Box(modifier = Modifier.fillMaxWidth()){
+        Text(text = "ERROR")
+    }
+}
+
+@Composable
+private fun LoadingScreen(){
+
 }

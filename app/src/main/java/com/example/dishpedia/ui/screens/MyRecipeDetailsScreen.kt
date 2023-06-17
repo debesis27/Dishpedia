@@ -105,7 +105,7 @@ fun MyRecipeDetailsScreenAppBar(
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = stringResource(id = R.string.back_button),
-                    tint = Color.White
+                    tint = Color.Black
                 )
             }
         },
@@ -114,14 +114,14 @@ fun MyRecipeDetailsScreenAppBar(
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = "Edit Recipe",
-                    tint = Color.White
+                    tint = Color.Black
                 )
             }
             IconButton(onClick = onDelete) {
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = stringResource(id = R.string.delete_button),
-                    tint = Color.White
+                    tint = Color.Black
                 )
             }
         },
