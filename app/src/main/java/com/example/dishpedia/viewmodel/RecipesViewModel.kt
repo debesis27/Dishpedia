@@ -4,12 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.dishpedia.DishpediaApplication
 import com.example.dishpedia.models.CategoryListItems
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
@@ -113,7 +108,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
     private fun applyCategoryQueries(courseType: String): HashMap<String, String> {
         val queries: HashMap<String, String> = HashMap()
 
-        queries[QUERY_NUMBER] = "10"
+        queries[QUERY_NUMBER] = "1" //TODO: Change this to 10 or smth, same for the query below
         queries[QUERY_API_KEY] = API_KEY
         queries[QUERY_TYPE] = courseType
         queries[QUERY_INSTRUCTIONS] = "true"
@@ -127,7 +122,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
         val queries: HashMap<String, String> = HashMap()
 
         queries[QUERY] = searchTerm
-        queries[QUERY_NUMBER] = "10"
+        queries[QUERY_NUMBER] = "1"
         queries[QUERY_API_KEY] = API_KEY
         queries[QUERY_INSTRUCTIONS] = "true"
         queries[QUERY_ADD_RECIPE_INFORMATION] = "true"

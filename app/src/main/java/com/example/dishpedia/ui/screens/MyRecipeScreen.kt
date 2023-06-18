@@ -35,8 +35,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -74,7 +74,7 @@ fun MyRecipeScreen(
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Item",
-                    tint = MaterialTheme.colors.onPrimary
+                    tint = MaterialTheme.colors.surface
                 )
             }
         },
@@ -106,7 +106,7 @@ fun MyRecipeCard(
 ){
     Card(
         modifier = modifier
-            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
+            .padding(top = 20.dp, bottom = 10.dp, start = 16.dp, end = 18.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .clickable {
@@ -114,22 +114,7 @@ fun MyRecipeCard(
             },
         elevation = 2.dp
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = myRecipe.title
-                )
-                Text(
-                    text = myRecipe.summary
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
+        Row{
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(myRecipe.image)
@@ -137,12 +122,32 @@ fun MyRecipeCard(
                     .build(),
                 contentDescription = myRecipe.title,
                 modifier = Modifier
-                    .size(72.dp)
+                    .size(120.dp)
                     .clip(RoundedCornerShape(8.dp)),
-                error = painterResource(id = R.drawable.ic_connection_error),
+                error = painterResource(id = R.drawable.image_placeholder),
                 placeholder = painterResource(id = R.drawable.loading_img),
                 contentScale = ContentScale.Crop
             )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 4.dp)
+            ) {
+                Text(
+                    text = myRecipe.title,
+                    modifier = Modifier.padding(top = 10.dp, bottom = 5.dp),
+                    style = MaterialTheme.typography.h2
+                )
+                Text(
+                    text = myRecipe.summary,
+                    style = MaterialTheme.typography.h3,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
@@ -154,8 +159,12 @@ fun MyRecipeScreenAppBar(
     scaffoldState: ScaffoldState,
 ){
     TopAppBar(
-        title = { Text(stringResource(id = R.string.app_name)) },
+        title = { Text(
+            text = stringResource(id = R.string.my_recipes),
+            style = MaterialTheme.typography.h1
+        ) },
         modifier = modifier,
+        backgroundColor = MaterialTheme.colors.surface,
         navigationIcon = {
             IconButton(
                 onClick = { coroutineScope.launch { scaffoldState.drawerState.open() } }

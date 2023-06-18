@@ -17,6 +17,8 @@ data class MyRecipe(
     val title: String = "",
     val summary: String = "",
     val readyInMinutes: Double = 0.0,
+    val category: String = "",
+    val vegetarian: Boolean,
     val servings: Double = 0.0,
     val ingredient: String,
     val instructions: String

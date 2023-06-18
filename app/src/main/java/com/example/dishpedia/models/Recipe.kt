@@ -12,15 +12,16 @@ data class Recipes(
 @Entity
 data class Recipe(
     @SerializedName("analyzedInstructions") val analyzedInstructions: List<AnalyzedInstruction>,
-    @SerializedName("dishTypes") val dishTypes: List<String> = listOf(""),
+    @SerializedName("cuisines") val cuisines: List<String> = listOf(""),
     @SerializedName("extendedIngredients") val extendedIngredients: List<ExtendedIngredient>,
     @SerializedName("id") @PrimaryKey val id: Int = 0,
     @SerializedName("image") val image: String = "",
-    @SerializedName("instructions") val instructions: String = "",
+    @SerializedName("procedure") val instructions: String = "",
     @SerializedName("readyInMinutes") val readyInMinutes: Int = 0,
     @SerializedName("servings") val servings: Int = 0,
     @SerializedName("summary") val summary: String = "",
-    @SerializedName("title") val title: String = ""
+    @SerializedName("title") val title: String = "",
+    @SerializedName("vegetarian") val vegetarian: Boolean = false
 )
 
 data class AnalyzedInstruction(

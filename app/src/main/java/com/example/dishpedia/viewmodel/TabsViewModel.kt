@@ -8,11 +8,11 @@ import androidx.lifecycle.ViewModel
 class TabsViewModel: ViewModel() {
     private val _tabIndex: MutableLiveData<Int> = MutableLiveData(0)
     val tabIndex: LiveData<Int> = _tabIndex
-    val tabs = listOf("Summary", "Ingredients", "Instructions")
+    val tabs = listOf("Overview", "Ingredients", "Procedure")
 
     private var isSwipeToTheLeft: Boolean = false
     private val draggableState = DraggableState { delta ->
-        isSwipeToTheLeft= delta > 0
+        isSwipeToTheLeft = delta > 0
     }
 
     private val _dragState = MutableLiveData(draggableState)

@@ -32,12 +32,12 @@ val Typography = Typography(
     ),
     h2 = TextStyle(
         fontFamily = Diphylleia,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Black,
         fontSize = 20.sp,
     ),
     h3 = TextStyle(
         fontFamily = Diphylleia,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Black,
         fontSize = 16.sp,
     ),
     body1 = TextStyle(

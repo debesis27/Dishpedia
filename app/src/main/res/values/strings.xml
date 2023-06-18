@@ -24,7 +24,9 @@
     <string name="my_recipes">My Recipes</string>
     <string name="recipe_title_label">Recipe Name *</string>
     <string name="recipe_summary_label">Recipe Summary</string>
-    <string name="recipe_ready_in_minutes_label">Cook Time (in minutes)</string>
+    <string name="recipe_ready_in_minutes_label">Cook Time (in minutes) *</string>
+    <string name="recipe_cuisines_label">Recipe Cuisines *</string>
+    <string name="recipe_vegetarian_label">Recipe Diet</string>
     <string name="recipe_servings_label">Servings</string>
     <string name="recipe_ingredients_label">Ingredients (Enter each ingredient in a new line) *</string>
     <string name="recipe_instructions_label">Instructions (Enter each instruction in a new line) *</string>

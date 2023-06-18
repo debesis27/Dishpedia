@@ -9,10 +9,12 @@ import com.example.dishpedia.data.MyRecipe
  */
 data class MyRecipeUiState(
     val id: Int = 0,
-    val image: Uri = "".toUri(), //TODO: Add a placeholder pic in storage, then its uri here
+    val image: Uri = "".toUri(),
     val title: String = "",
     val summary: String = "",
     val readyInMinutes: String = "",
+    val category: String = "",
+    val vegetarian: Boolean = false,
     val servings: String = "",
     val ingredient: String = "",
     val instructions: String = "",
@@ -28,6 +30,8 @@ fun MyRecipeUiState.toMyRecipe(): MyRecipe = MyRecipe(
     title = title,
     summary = summary,
     readyInMinutes = readyInMinutes.toDoubleOrNull() ?: 0.0,
+    category= category,
+    vegetarian = vegetarian,
     servings = servings.toDoubleOrNull() ?: 0.0,
     ingredient = ingredient,
     instructions = instructions
@@ -42,6 +46,8 @@ fun MyRecipe.toMyRecipeUiState(actionEnabled: Boolean = false): MyRecipeUiState 
     title = title,
     summary = summary,
     readyInMinutes = readyInMinutes.toString(),
+    category= category,
+    vegetarian = vegetarian,
     servings = servings.toString(),
     ingredient = ingredient,
     instructions = instructions,
@@ -52,5 +58,5 @@ fun MyRecipe.toMyRecipeUiState(actionEnabled: Boolean = false): MyRecipeUiState 
  * Extension function to check whether title, ingredients and instructions are empty
  */
 fun MyRecipeUiState.isValid(): Boolean {
-    return title.isNotBlank() && ingredient.isNotBlank() && instructions.isNotBlank()
+    return title.isNotBlank() && readyInMinutes.isNotBlank() && category.isNotBlank() && ingredient.isNotBlank() && instructions.isNotBlank()
 }

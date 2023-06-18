@@ -41,7 +41,10 @@ fun DishpediaApp(
         }
 
         composable(route = NavigationItemsProvider.recipeInfo.route){
-            RecipeInfoScreen(recipesViewModel)
+            RecipeInfoScreen(
+                recipeViewModel = recipesViewModel,
+                navigateUp = { navController.navigateUp() }
+            )
         }
 
         composable(route = NavigationItemsProvider.MyRecipes.route){
