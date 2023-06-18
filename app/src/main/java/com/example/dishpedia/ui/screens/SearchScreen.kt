@@ -1,6 +1,7 @@
 package com.example.dishpedia.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +48,8 @@ fun SearchScreen(
             SearchBar(recipesViewModel)
             when(recipeUiState){
                 is RecipesUiState.Success -> RecipeList(recipeUiState.recipes, recipesViewModel, navController)
-                else -> {}
+                is RecipesUiState.Loading -> { /* Don't do anything */ }
+                is RecipesUiState.Error -> ErrorScreen()
             }
         }
     }
@@ -104,10 +106,12 @@ fun SearchBar(recipesViewModel: RecipesViewModel){
     )
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun SearchBarPreview(){
-//    Surface(modifier = Modifier.fillMaxSize()) {
-//        SearchBar()
-//    }
-//}
+@Composable
+private fun ErrorScreen(){
+    Box(modifier = Modifier.fillMaxWidth()){
+        Text(
+            text = "Sorry, Please try again later",
+            style = MaterialTheme.typography.h3
+        )
+    }
+}

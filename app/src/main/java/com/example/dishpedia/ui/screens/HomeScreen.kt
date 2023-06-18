@@ -50,6 +50,7 @@ import com.example.dishpedia.models.NavigationItemsProvider
 import com.example.dishpedia.utils.NavigationDrawer
 import com.example.dishpedia.utils.RecipeList
 import com.example.dishpedia.viewmodel.CategoryRecipesUiState
+import com.example.dishpedia.viewmodel.RecipeUiState
 import com.example.dishpedia.viewmodel.RecipesUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
 import com.google.accompanist.placeholder.PlaceholderHighlight
@@ -66,6 +67,8 @@ fun HomeScreen(
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
     val navItems = NavigationDrawerItemsProvider.navItems
+
+    recipesViewModel.recipeUiState = RecipeUiState.Loading
 
     Scaffold(
         scaffoldState = scaffoldState,

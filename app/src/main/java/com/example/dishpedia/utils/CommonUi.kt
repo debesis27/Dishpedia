@@ -512,7 +512,7 @@ fun IngredientsScreen(
                 text = "$i) $item",
                 fontSize = 18.sp,
                 style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(start = 4.dp, bottom = 3.dp)
+                modifier = Modifier.padding(start = 4.dp, bottom = 6.dp)
             )
             i += 1
         }
@@ -549,7 +549,7 @@ fun InstructionsScreen(
                 text = "$i) $item",
                 fontSize = 18.sp,
                 style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 3.dp)
+                modifier = Modifier.padding(bottom = 8.dp)
             )
             i += 1
         }
@@ -834,7 +834,8 @@ fun ExpandableText(
             text = text,
             maxLines = if (expanded) Int.MAX_VALUE else minimizedMaxLines,
             onTextLayout = { if(it.hasVisualOverflow) hasVisualOverflow = true },
-            style = style
+            style = style,
+            fontSize = 17.sp
         )
         if (hasVisualOverflow && !expanded) {
             Row(
