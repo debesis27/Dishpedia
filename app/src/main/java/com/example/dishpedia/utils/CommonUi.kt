@@ -253,7 +253,7 @@ fun RecipeInfo(
     ingredients: List<String>,
     instructions: List<String>,
     tabsViewModel: TabsViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ){
     val tabIndex = tabsViewModel.tabIndex.observeAsState()
     var sizeOfRecipeInfoCard by remember{ mutableStateOf(0.dp) }
@@ -647,7 +647,7 @@ fun MyRecipeInputForm(
         OutlinedTextField(
             value = myRecipeUiState.category,
             onValueChange = { onRecipeValueChange(myRecipeUiState.copy(category = it)) },
-            label = { Text(stringResource(id = R.string.recipe_category_label))},
+            label = { Text(stringResource(id = R.string.recipe_cuisines_label))},
             modifier = Modifier.fillMaxWidth(),
             enabled = true,
             singleLine = true
@@ -841,7 +841,6 @@ fun ExpandableText(
                 modifier = Modifier.align(Alignment.BottomEnd),
                 verticalAlignment = Alignment.Bottom
             ) {
-//                val lineHeightDp: Dp = with(LocalDensity.current) { style.lineHeight.toDp() }
                 Spacer(
                     modifier = Modifier
                         .width(48.dp)
@@ -870,10 +869,22 @@ fun ExpandableText(
                 modifier = Modifier.align(Alignment.BottomEnd),
                 verticalAlignment = Alignment.Bottom
             ) {
+                Spacer(
+                    modifier = Modifier
+                        .width(48.dp)
+                        .height(20.dp)
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(Color.Transparent, MaterialTheme.colors.background)
+                            )
+                        )
+                )
                 Text(
                     text = "Show Less",
                     style = MaterialTheme.typography.h3,
                     modifier = Modifier
+                        .background(MaterialTheme.colors.background)
+                        .padding(start = 4.dp)
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() },
@@ -923,30 +934,3 @@ fun ExpandableText(
 //        }
 //    }
 //}
-
-/**
- * Modifier extension function made to add shimmer effect
- */
-fun Modifier.shimmerBackground(shape: Shape = RectangleShape): Modifier = composed {
-    val transition = rememberInfiniteTransition()
-
-    val translateAnimation by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 400f,
-        animationSpec = infiniteRepeatable(
-            tween(durationMillis = 1500, easing = LinearOutSlowInEasing),
-            RepeatMode.Restart
-        ),
-    )
-    val shimmerColors = listOf(
-        Color.LightGray.copy(alpha = 0.9f),
-        Color.LightGray.copy(alpha = 0.4f),
-    )
-    val brush = Brush.linearGradient(
-        colors = shimmerColors,
-        start = Offset(translateAnimation, translateAnimation),
-        end = Offset(translateAnimation + 100f, translateAnimation + 100f),
-        tileMode = TileMode.Mirror,
-    )
-    return@composed this.then(background(brush, shape))
-}

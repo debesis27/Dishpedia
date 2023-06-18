@@ -14,8 +14,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -49,8 +52,11 @@ import com.example.dishpedia.utils.RecipeList
 import com.example.dishpedia.viewmodel.CategoryRecipesUiState
 import com.example.dishpedia.viewmodel.RecipesUiState
 import com.example.dishpedia.viewmodel.RecipesViewModel
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.fade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import com.google.accompanist.placeholder.placeholder
 
 @Composable
 fun HomeScreen(
@@ -272,11 +278,34 @@ fun Carousel(
 @Composable
 private fun ErrorScreen(){
     Box(modifier = Modifier.fillMaxWidth()){
-        Text(text = "ERROR")
+        Text(
+            text = "Sorry, Please try again later",
+            style = MaterialTheme.typography.h3
+        )
     }
 }
 
 @Composable
 private fun LoadingScreen(){
+    LazyColumn(
+        modifier = Modifier.padding(top = 10.dp, start = 14.dp, end = 14.dp, bottom = 10.dp)
+    ){
+        items(10){
+            Card(
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 40.dp)
+                    .height(300.dp)
+                    .fillMaxWidth()
+                    .placeholder(
+                        visible = true,
+                        color = Color.Gray,
+                        shape = RoundedCornerShape(16.dp),
+                        highlight = PlaceholderHighlight.fade()
+                    ),
+                elevation = 4.dp
+            ) {
 
+            }
+        }
+    }
 }

@@ -12,7 +12,7 @@ data class Recipes(
 @Entity
 data class Recipe(
     @SerializedName("analyzedInstructions") val analyzedInstructions: List<AnalyzedInstruction>,
-    @SerializedName("dishTypes") val dishTypes: List<String> = listOf(""),
+    @SerializedName("cuisines") val cuisines: List<String> = listOf(""),
     @SerializedName("extendedIngredients") val extendedIngredients: List<ExtendedIngredient>,
     @SerializedName("id") @PrimaryKey val id: Int = 0,
     @SerializedName("image") val image: String = "",
