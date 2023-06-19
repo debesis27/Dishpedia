@@ -12,6 +12,7 @@ An Android app that helps user to find new recipes or create their own
 * [Setup](#Setup)
 * [Reflection](#Reflection)
 * [Roadmap](#Roadmap)
+
 ## Screenshots
 
 ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
@@ -39,23 +40,25 @@ To clone and run this application you'll need [Android Studio](https://developer
 
 Open Android Studio, and select 'Get from VCS'
 
-![Setup-1](/ReadMe-Images/Setup-1)
+![Setup-1](/ReadMe-Images/Setup-1.png)
 
 Enter 'https://github.com/debesis27/Dishpedia.git' (without the quotes) in URL text field
 
-![Setup-2](/ReadMe-Images/Setup-2)
+![Setup-2](/ReadMe-Images/Setup-2.png)
 
 Click Clone
 
-![Setup-3](/ReadMe-Images/Setup-3)
+![Setup-3](/ReadMe-Images/Setup-3.png)
 
 Create a new account at [Spoonacular](https://spoonacular.com/registeremail) and enter your api key in [CommonUi.kt](https://github.com/debesis27/Dishpedia/blob/master/app/src/main/java/com/example/dishpedia/utils/Constants.kt) 
 
-![Setup-4](/ReadMe-Images/Setup-4)
+![Setup-4](/ReadMe-Images/Setup-4.png)
+
 ## Reflection
+
 ## Roadmap
 
-- Additional browser support
+- 
 
-- Add more integrations
+- 
 
