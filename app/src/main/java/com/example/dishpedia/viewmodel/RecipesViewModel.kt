@@ -52,7 +52,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
      * Call getRandomRecipes() on init so we can display status immediately.
      */
     init {
-        getRandomRecipes(0) //TODO: Change it later to 20 or so
+        getRandomRecipes(10)
     }
 
     private fun getRandomRecipes(number: Int){
@@ -108,7 +108,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
     private fun applyCategoryQueries(courseType: String): HashMap<String, String> {
         val queries: HashMap<String, String> = HashMap()
 
-        queries[QUERY_NUMBER] = "1" //TODO: Change this to 10 or smth, same for the query below
+        queries[QUERY_NUMBER] = "10"
         queries[QUERY_API_KEY] = API_KEY
         queries[QUERY_TYPE] = courseType
         queries[QUERY_INSTRUCTIONS] = "true"
@@ -122,7 +122,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
         val queries: HashMap<String, String> = HashMap()
 
         queries[QUERY] = searchTerm
-        queries[QUERY_NUMBER] = "1"
+        queries[QUERY_NUMBER] = "10"
         queries[QUERY_API_KEY] = API_KEY
         queries[QUERY_INSTRUCTIONS] = "true"
         queries[QUERY_ADD_RECIPE_INFORMATION] = "true"
