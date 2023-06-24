@@ -50,7 +50,7 @@ Click Clone
 
 ![Setup-3](/ReadMe-Images/Setup-3.png)
 
-Create a new account at [Spoonacular](https://spoonacular.com/registeremail) and enter your api key in [CommonUi.kt](https://github.com/debesis27/Dishpedia/blob/master/app/src/main/java/com/example/dishpedia/utils/Constants.kt) 
+Create a new account at [Spoonacular](https://spoonacular.com/food-api/console#) and enter your api key in [CommonUi.kt](https://github.com/debesis27/Dishpedia/blob/master/app/src/main/java/com/example/dishpedia/utils/Constants.kt) 
 
 ![Setup-4](/ReadMe-Images/Setup-4.png)
 
