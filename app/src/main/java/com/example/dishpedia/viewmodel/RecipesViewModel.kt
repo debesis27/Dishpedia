@@ -14,6 +14,7 @@ import com.example.dishpedia.utils.Constants.Companion.QUERY
 import com.example.dishpedia.utils.Constants.Companion.QUERY_ADD_RECIPE_INFORMATION
 import com.example.dishpedia.utils.Constants.Companion.QUERY_API_KEY
 import com.example.dishpedia.utils.Constants.Companion.QUERY_FILL_INGREDIENTS
+import com.example.dishpedia.utils.Constants.Companion.QUERY_INCLUDE_NUTRITION
 import com.example.dishpedia.utils.Constants.Companion.QUERY_INSTRUCTIONS
 import com.example.dishpedia.utils.Constants.Companion.QUERY_NUMBER
 import com.example.dishpedia.utils.Constants.Companion.QUERY_TYPE
@@ -114,6 +115,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
         queries[QUERY_INSTRUCTIONS] = "true"
         queries[QUERY_ADD_RECIPE_INFORMATION] = "true"
         queries[QUERY_FILL_INGREDIENTS] = "true"
+        queries[QUERY_INCLUDE_NUTRITION] = "true"
 
         return queries
     }
@@ -127,6 +129,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
         queries[QUERY_INSTRUCTIONS] = "true"
         queries[QUERY_ADD_RECIPE_INFORMATION] = "true"
         queries[QUERY_FILL_INGREDIENTS] = "true"
+        queries[QUERY_INCLUDE_NUTRITION] = "true"
 
         return queries
     }

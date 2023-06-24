@@ -21,7 +21,8 @@ data class Recipe(
     @SerializedName("servings") val servings: Int = 0,
     @SerializedName("summary") val summary: String = "",
     @SerializedName("title") val title: String = "",
-    @SerializedName("vegetarian") val vegetarian: Boolean = false
+    @SerializedName("vegetarian") val vegetarian: Boolean = false,
+    @SerializedName("nutrition") val nutrition: Nutrition
 )
 
 data class AnalyzedInstruction(
@@ -91,4 +92,15 @@ data class Us(
     val amount: Double = 0.0,
     val unitLong: String = "",
     val unitShort: String = ""
+)
+
+data class Nutrition(
+    val nutrients: List<Nutrients>
+)
+
+data class Nutrients(
+    val name: String = "",
+    val amount: Double = 0.0,
+    val unit: String = "",
+    val percentOfDailyNeeds: Double = 0.0
 )

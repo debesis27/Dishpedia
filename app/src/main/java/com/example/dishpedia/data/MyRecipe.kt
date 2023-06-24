@@ -21,7 +21,11 @@ data class MyRecipe(
     val vegetarian: Boolean,
     val servings: Double = 0.0,
     val ingredient: String,
-    val instructions: String
+    val instructions: String,
+    val calorieAmount: String = "",
+    val fatAmount: String = "",
+    val carbohydrateAmount: String = "",
+    val proteinAmount: String = ""
 )
 
 //object Converters {

@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dishpedia.R
+import com.example.dishpedia.models.Nutrients
 import com.example.dishpedia.utils.RecipeInfo
 import com.example.dishpedia.viewmodel.AppViewModelProvider
 import com.example.dishpedia.viewmodel.MyRecipeDetailViewModel
@@ -46,6 +47,12 @@ fun MyRecipeDetailsScreen(
     val coroutineScope = rememberCoroutineScope()
     var deleteConfirmation by rememberSaveable { mutableStateOf(false) }
 
+    val nutrients: ArrayList<Nutrients> = ArrayList()
+    nutrients.add(Nutrients("Calories", myRecipeUiState.calorieAmount.toDoubleOrNull() ?: -1.0, "kcal", 0.0))
+    nutrients.add(Nutrients("Fat", myRecipeUiState.fatAmount.toDoubleOrNull() ?: -1.0, "g", 0.0))
+    nutrients.add(Nutrients("Carbohydrates", myRecipeUiState.carbohydrateAmount.toDoubleOrNull() ?: -1.0, "g", 0.0))
+    nutrients.add(Nutrients("Protein", myRecipeUiState.proteinAmount.toDoubleOrNull() ?: -1.0, "g", 0.0))
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -61,6 +68,7 @@ fun MyRecipeDetailsScreen(
             servings = myRecipeUiState.servings,
             ingredients = myRecipeUiState.ingredient.lines(),
             instructions = myRecipeUiState.instructions.lines(),
+            nutrients = nutrients,
             tabsViewModel = tabsViewModel
         )
 

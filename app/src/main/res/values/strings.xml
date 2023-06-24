@@ -20,6 +20,7 @@
     <string name="cook_time">Cook Time</string>
     <string name="servings">Servings</string>
     <string name="description">Description</string>
+    <string name="nutrition">Nutrition</string>
     <string name="error">Error</string>
     <string name="my_recipes">My Recipes</string>
     <string name="recipe_title_label">Recipe Name *</string>
@@ -28,6 +29,10 @@
     <string name="recipe_cuisines_label">Recipe Cuisines *</string>
     <string name="recipe_vegetarian_label">Recipe Diet</string>
     <string name="recipe_servings_label">Servings</string>
+    <string name="recipe_calories_label">Calories (in kcal)</string>
+    <string name="recipe_fat_label">Fat (in g)</string>
+    <string name="recipe_carbohydrates_label">Carbohydrates (in g)</string>
+    <string name="recipe_protein_label">Protein (in g)</string>
     <string name="recipe_ingredients_label">Ingredients (Enter each ingredient in a new line) *</string>
     <string name="recipe_instructions_label">Instructions (Enter each instruction in a new line) *</string>
     <string name="attention">Attention:</string>

@@ -87,6 +87,7 @@ import coil.request.ImageRequest
 import com.example.dishpedia.R
 import com.example.dishpedia.models.NavigationItem
 import com.example.dishpedia.models.NavigationItemsProvider
+import com.example.dishpedia.models.Nutrients
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
 import com.example.dishpedia.viewmodel.RecipesViewModel
@@ -252,12 +253,23 @@ fun RecipeInfo(
     servings: String,
     ingredients: List<String>,
     instructions: List<String>,
+    nutrients: List<Nutrients>,
     tabsViewModel: TabsViewModel,
     modifier: Modifier = Modifier,
 ){
     val tabIndex = tabsViewModel.tabIndex.observeAsState()
     var sizeOfRecipeInfoCard by remember{ mutableStateOf(0.dp) }
     val density = LocalDensity.current
+
+    val nutrientsList: ArrayList<Nutrients> = ArrayList()
+    nutrients.forEach{ nutrient ->
+        if(nutrient.name == "Calories" || nutrient.name == "Fat" || nutrient.name == "Carbohydrates" || nutrient.name == "Protein"){
+            nutrientsList.add(nutrient)
+        }
+    }
+    val temp = nutrientsList[1]
+    nutrientsList[1] = nutrientsList[2]
+    nutrientsList[2] = temp
 
     Box(
         modifier = modifier
@@ -341,6 +353,7 @@ fun RecipeInfo(
             when(tabIndex.value){
                 0 -> SummaryScreen(
                     summary = summary,
+                    nutrients = nutrientsList,
                     tabsViewModel = tabsViewModel
                 )
                 1 -> IngredientsScreen(
@@ -379,6 +392,7 @@ fun RecipeInfoCard(
         Card(
             modifier = modifier
                 .width(350.dp),
+            elevation = 8.dp,
             backgroundColor = MaterialTheme.colors.surface
         ) {
             Column(
@@ -440,11 +454,73 @@ fun RecipeInfoCard(
 }
 
 /**
- * Composable to show the summary and nutrition of a recipe
+ * Composable to show the nutrition of a recipe on a Card
+ */
+@Composable
+fun NutritionCard(
+    modifier: Modifier = Modifier,
+    nutrients: List<Nutrients>
+){
+   Card(
+       modifier = modifier
+           .padding(horizontal = 0.dp, vertical = 32.dp),
+       backgroundColor = MaterialTheme.colors.surface,
+       elevation = 4.dp
+   ) {
+       Column(
+           modifier = Modifier
+               .padding(horizontal = 16.dp, vertical = 14.dp),
+           verticalArrangement = Arrangement.Center
+       ) {
+           Text(
+               text = stringResource(id = R.string.nutrition),
+               style = MaterialTheme.typography.h2,
+               modifier = Modifier.padding(start = 1.dp, bottom = 4.dp)
+           )
+           Divider(
+               color = Color.Black,
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .padding(horizontal = 1.dp)
+                   .height(1.dp)
+                   .clip(CircleShape)
+           )
+           Row(
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .padding(start = 1.dp, end = 1.dp, top = 14.dp),
+               verticalAlignment = Alignment.CenterVertically,
+               horizontalArrangement = Arrangement.SpaceBetween
+           ) {
+               nutrients.forEach { nutrient ->
+                   Column(
+                       modifier = Modifier.padding(end = 4.dp),
+                       horizontalAlignment = Alignment.CenterHorizontally
+                   ) {
+                       Text(
+                           text = nutrient.name,
+                           style = MaterialTheme.typography.h3
+                       )
+                       Text(
+                           text = "${nutrient.amount} ${nutrient.unit}",
+                           style = MaterialTheme.typography.h3,
+                           color = MaterialTheme.colors.onSecondary,
+                           modifier = Modifier.padding(vertical = 14.dp)
+                       )
+                   }
+               }
+           }
+       }
+   }
+}
+
+/**
+ * Composable to show the summary and nutrition of a recipe using [ExpandableText] and [NutritionCard]
  */
 @Composable
 fun SummaryScreen(
     summary: String,
+    nutrients: List<Nutrients>,
     tabsViewModel: TabsViewModel
 ){
     Column(
@@ -466,6 +542,7 @@ fun SummaryScreen(
             text = summary,
             minimizedMaxLines = 5
         )
+        if (showNutritionCard(nutrients)) NutritionCard(nutrients = nutrients)
     }
 }
 
@@ -630,8 +707,7 @@ fun MyRecipeInputForm(
             onValueChange = { onRecipeValueChange(myRecipeUiState.copy(summary = it)) },
             label = { Text(stringResource(id = R.string.recipe_summary_label))},
             modifier = Modifier.fillMaxWidth(),
-            enabled = true,
-            singleLine = true
+            enabled = true
         )
 
         OutlinedTextField(
@@ -648,6 +724,46 @@ fun MyRecipeInputForm(
             value = myRecipeUiState.category,
             onValueChange = { onRecipeValueChange(myRecipeUiState.copy(category = it)) },
             label = { Text(stringResource(id = R.string.recipe_cuisines_label))},
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            singleLine = true
+        )
+
+        OutlinedTextField(
+            value = myRecipeUiState.calorieAmount,
+            onValueChange = { onRecipeValueChange(myRecipeUiState.copy(calorieAmount = it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            label = { Text(stringResource(id = R.string.recipe_calories_label))},
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            singleLine = true
+        )
+
+        OutlinedTextField(
+            value = myRecipeUiState.fatAmount,
+            onValueChange = { onRecipeValueChange(myRecipeUiState.copy(fatAmount = it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            label = { Text(stringResource(id = R.string.recipe_fat_label))},
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            singleLine = true
+        )
+
+        OutlinedTextField(
+            value = myRecipeUiState.carbohydrateAmount,
+            onValueChange = { onRecipeValueChange(myRecipeUiState.copy(carbohydrateAmount = it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            label = { Text(stringResource(id = R.string.recipe_carbohydrates_label))},
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            singleLine = true
+        )
+
+        OutlinedTextField(
+            value = myRecipeUiState.proteinAmount,
+            onValueChange = { onRecipeValueChange(myRecipeUiState.copy(proteinAmount = it)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            label = { Text(stringResource(id = R.string.recipe_protein_label))},
             modifier = Modifier.fillMaxWidth(),
             enabled = true,
             singleLine = true

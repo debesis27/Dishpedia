@@ -90,6 +90,7 @@ private fun RecipeDetailsScreen(
             servings = recipe.servings.toString(),
             ingredients = ingredients,
             instructions = instructions,
+            nutrients = recipe.nutrition.nutrients,
             tabsViewModel = tabsViewModel
         )
 

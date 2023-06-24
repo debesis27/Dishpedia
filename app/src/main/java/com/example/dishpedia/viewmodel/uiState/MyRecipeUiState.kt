@@ -18,6 +18,10 @@ data class MyRecipeUiState(
     val servings: String = "",
     val ingredient: String = "",
     val instructions: String = "",
+    val calorieAmount: String = "",
+    val fatAmount: String = "",
+    val carbohydrateAmount: String = "",
+    val proteinAmount: String = "",
     val actionEnabled: Boolean = false
 )
 
@@ -34,7 +38,11 @@ fun MyRecipeUiState.toMyRecipe(): MyRecipe = MyRecipe(
     vegetarian = vegetarian,
     servings = servings.toDoubleOrNull() ?: 0.0,
     ingredient = ingredient,
-    instructions = instructions
+    instructions = instructions,
+    calorieAmount = calorieAmount,
+    fatAmount = fatAmount,
+    carbohydrateAmount = carbohydrateAmount,
+    proteinAmount = proteinAmount
 )
 
 /**
@@ -51,6 +59,10 @@ fun MyRecipe.toMyRecipeUiState(actionEnabled: Boolean = false): MyRecipeUiState 
     servings = servings.toString(),
     ingredient = ingredient,
     instructions = instructions,
+    calorieAmount = calorieAmount,
+    fatAmount = fatAmount,
+    carbohydrateAmount = carbohydrateAmount,
+    proteinAmount = proteinAmount,
     actionEnabled = actionEnabled
 )
 

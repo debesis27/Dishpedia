@@ -2,7 +2,6 @@ package com.example.dishpedia.api
 
 import com.example.dishpedia.models.Recipe
 import com.example.dishpedia.models.Recipes
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -29,6 +28,7 @@ interface RecipesApiService {
     @GET("/recipes/{id}/information")
     suspend fun getRecipeById(
         @Path("id") id: Int,
-        @Query("apiKey") apiKey: String
+        @Query("apiKey") apiKey: String,
+        @Query("includeNutrition") includeNutrition: Boolean = true
     ): Recipe
 }
