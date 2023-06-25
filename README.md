@@ -6,30 +6,41 @@ An Android app that helps user to find new recipes or create their own
 
 ## Table of Contents
 
+* [Demo](#Demo)
 * [Screenshots](#Screenshots)
 * [Features](#Features)
 * [Tech Stack Used](#Tech-Stack)
 * [Setup](#Setup)
-* [Reflection](#Reflection)
 * [Roadmap](#Roadmap)
+
+## Demo
+
+You can try the demo on a web browser by clicking [here](https://appetize.io/app/6phxn6r42pgmud7bbhxfjstyqy)
+
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+| Screens                  | Screenshots                             |
+|:-------------------------|:----------------------------------------|
+| Home screen              | ![home](/ReadMe-Images/ss-1.png)        |
+| Search screen            | ![search](/ReadMe-Images/ss-2.png)      |
+| Recipe Info screen       | ![recipe info](/ReadMe-Images/ss-3.png) |
+| My Recipes screen        | ![my recipes](/ReadMe-Images/ss-4.png)  |
+| Recipe entry/edit screen | ![entry/edit](/ReadMe-Images/ss-5.png)  |
+
 
 
 ## Features
 
 - Search for recipes from the [Spoonacular](https://spoonacular.com/) database
-- Get recipes for a particular category
+- Get complete information of a recipe including its ingredients and procedure
+- Search for recipes of a particular category
 - Create your own recipes and save it offline
-
-
 ## Tech Stack
 
 **UI:** Jetpack Compose
 
-**Databse:** SQLite
+**Database:** SQLite
 
 **Libraries:** Retrofit, Room, Coil, Accompanist
 
@@ -50,15 +61,18 @@ Click Clone
 
 ![Setup-3](/ReadMe-Images/Setup-3.png)
 
-Create a new account at [Spoonacular](https://spoonacular.com/registeremail) and enter your api key in [CommonUi.kt](https://github.com/debesis27/Dishpedia/blob/master/app/src/main/java/com/example/dishpedia/utils/Constants.kt) 
+Create a new account at [Spoonacular](https://spoonacular.com/registeremail) and enter your api key in [CommonUi.kt](https://github.com/debesis27/Dishpedia/blob/master/app/src/main/java/com/example/dishpedia/utils/Constants.kt)
 
 ![Setup-4](/ReadMe-Images/Setup-4.png)
-
-## Reflection
-
 ## Roadmap
 
-- 
+- Adding options to share recipe on Whatsapp, etc.
 
-- 
+- Adding filters to search bar
+
+- Adding voice search
+
+- Adding photos for ingredients
+
+- Improving Ingredients and Instructions screens
 
