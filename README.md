@@ -20,15 +20,13 @@ You can try the demo on a web browser by clicking [here](https://appetize.io/app
 
 ## Screenshots
 
-| Screens                  | Screenshots                             |
-|:-------------------------|:----------------------------------------|
-| Home screen              | ![home](/ReadMe-Images/ss-1.png)        |
-| Search screen            | ![search](/ReadMe-Images/ss-2.png)      |
-| Recipe Info screen       | ![recipe info](/ReadMe-Images/ss-3.png) |
-| My Recipes screen        | ![my recipes](/ReadMe-Images/ss-4.png)  |
-| Recipe entry/edit screen | ![entry/edit](/ReadMe-Images/ss-5.png)  |
-
-
+| Screens                  | Screenshots                                                  |
+|:-------------------------|:-------------------------------------------------------------|
+| Home screen              | <img src="/ReadMe-Images/ss-1.png" width="350" height="630"> |
+| Search screen            | <img src="/ReadMe-Images/ss-2.png" width="350" height="630"> |
+| Recipe Info screen       | <img src="/ReadMe-Images/ss-3.png" width="350" height="630"> |
+| My Recipes screen        | <img src="/ReadMe-Images/ss-4.png" width="350" height="630"> |
+| Recipe entry/edit screen | <img src="/ReadMe-Images/ss-5.png" width="350" height="630"> |
 
 ## Features
 
