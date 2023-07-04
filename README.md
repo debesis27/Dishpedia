@@ -15,7 +15,7 @@ An Android app that helps user to find new recipes or create their own
 
 ## Demo
 
-You can try the demo on a web browser by clicking [here](https://appetize.io/app/6phxn6r42pgmud7bbhxfjstyqy)
+You can try the demo on a web browser by clicking [here](https://appetize.io/app/6phxn6r42pgmud7bbhxfjstyqy) or you can download the apk file [here](https://drive.google.com/file/d/1LQ4uZrR2lGsbpY3-KOn6UDi0svftxKcY/view?usp=sharing)
 
 
 ## Screenshots
